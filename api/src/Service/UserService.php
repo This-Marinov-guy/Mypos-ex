@@ -8,6 +8,7 @@ use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
@@ -17,15 +18,22 @@ class UserService
     {
     }
 
-    public function createUser($request): array
+    public function createUser($request)
     {
-        try {
+            if ($this->userRepository->findOneByEmail( $request->query->get('email'))) {
+                return [
+                    'error' => 'User Already exists',
+                    'code' => 500,
+                ];
+            }
 
             $user = $this->serializer->deserialize($request->getContent(), User::class, 'json');
             $hashedPassword = $this->passwordHasher->hashPassword(
                 $user,
-                $request->pasword,
+                $request->query->get('password'),
             );
+
+            $user->setRoles(array('USER_ADMIN'));
             $user->setPassword($hashedPassword);
 
             $em = $this->doctrine->getManager();
@@ -33,16 +41,12 @@ class UserService
             $em->flush();
 
             return [
-                'message' => 'User Created!',
+                'error' => 'User registered!',
                 'code' => 200,
                 'data' => $user
             ];
-        } catch (\Exception $e) {
-            return [
-                'message' => 'Creating Fail',
-                'code' => 500,
-            ];
-        }
+
+
     }
 
 }
