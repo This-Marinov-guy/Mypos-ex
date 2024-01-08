@@ -36,9 +36,10 @@ class AppointmentController extends AbstractController
         );
     }
 
-    #[Route('/appointment/add', name: 'appointment_add', methods: ['POST'])]
+    #[Route('/appointment/add', name: 'appointment_add')]
     public function create(Request $request, AppointmentService $appointmentService): JsonResponse
     {
+
         return $this->json($appointmentService->createAppointment($request));
     }
 

@@ -4,13 +4,10 @@ namespace App\Service;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
-use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\HttpException;
-use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class UserService
 {
@@ -18,35 +15,52 @@ class UserService
     {
     }
 
-    public function createUser($request)
+    public function createUser($request): array
     {
-            if ($this->userRepository->findOneByEmail( $request->query->get('email'))) {
-                return [
-                    'error' => 'User Already exists',
-                    'code' => 500,
-                ];
-            }
-
+        try {
             $user = $this->serializer->deserialize($request->getContent(), User::class, 'json');
+
             $hashedPassword = $this->passwordHasher->hashPassword(
                 $user,
-                $request->query->get('password'),
+                $request->request->get('password'),
             );
-
-            $user->setRoles(array('USER_ADMIN'));
             $user->setPassword($hashedPassword);
+
+            $user->setRoles(array('ROLE_USER'));
 
             $em = $this->doctrine->getManager();
             $em->persist($user);
             $em->flush();
 
             return [
-                'error' => 'User registered!',
+                'message' => 'User registered!',
                 'code' => 200,
                 'data' => $user
             ];
-
-
+        } catch (Exception $e) {
+            if ($e->getCode() == 19) {
+                return [
+                    'error' => 'User Already exists',
+                    'code' => 500,
+                ];
+            } else {
+                return [];
+            }
+        }
     }
 
+    public function authUser($user): array
+    {
+        if (!$user) {
+            return
+                [
+                    'error' => 'Invalid Credentials',
+                    'code' => 401,
+                ];
+        }
+
+        return [
+            "role" => $user->getRoles(),
+        ];
+    }
 }
