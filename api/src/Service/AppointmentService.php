@@ -18,76 +18,79 @@ class AppointmentService
 
     public function filterPaginated(Request $request): array
     {
-        try {
-            $filters = array_combine(
-                ['dateFrom', 'dateTo', 'name', 'egn', 'details'],
-                array_map(fn($param) => $request->query->get($param), ['dateFrom', 'dateTo', 'name', 'egn', 'details'])
-            );
+        $filters = array_combine(
+            ['dateFrom', 'dateTo', 'name', 'egn', 'details'],
+            array_map(fn($param) => $request->query->get($param), ['dateFrom', 'dateTo', 'name', 'egn', 'details'])
+        );
 
-            $page = $request->query->get('page') ?: 1;
+        $page = $request->query->get('page') ?: 1;
 
-            $queryBuilder = $this->appointmentRepository->applyFilters($filters);
+        $queryBuilder = $this->appointmentRepository->applyFilters($filters);
 
-            ['paginator' => $paginator, 'pagesCount' => $pagesCount] = $this->appointmentRepository->paginateQuery($queryBuilder, $page);
+        ['paginator' => $paginator, 'pagesCount' => $pagesCount] = $this->appointmentRepository->paginateQuery($queryBuilder, $page);
 
-            $appointments = $paginator->getIterator();
+        $appointments = $paginator->getIterator();
 
+        if (!$appointments) {
             return [
-                'message' => 'success',
-                'code' => 200,
-                'data' => $appointments,
-                'pagesCount' => $pagesCount,
-            ];
-        } catch (Exception $e) {
-            return [
-                'message' => 'fail',
+                'error' => 'Failed to fetch',
                 'code' => 500,
-
             ];
         }
+
+        return [
+            'message' => 'success',
+            'code' => 200,
+            'data' => $appointments,
+            'pagesCount' => $pagesCount,
+        ];
+
+
     }
 
     public function filterName($appointment): array
     {
-        try {
-            $appointments = $this->appointmentRepository->findBy(['name' => $appointment->getName()], ['date' => 'ASC']);
+        $appointments = $this->appointmentRepository->findBy(['name' => $appointment->getName()], ['date' => 'ASC']);
 
+        if (!$appointments) {
             return [
-                'message' => 'success',
-                'code' => 200,
-                'data' => array_values(array_filter($appointments, function ($a) use ($appointment) {
-                    return $a->getId() !== $appointment->getId() && $a->getDate() > new DateTime();
-                }))
-            ];
-        } catch (Exception $e) {
-            return [
-                'message' => 'fail',
+                'error' => 'fail',
                 'code' => 500,
             ];
         }
+
+        return [
+            'message' => 'success',
+            'code' => 200,
+            'data' => array_values(array_filter($appointments, function ($a) use ($appointment) {
+                return $a->getId() !== $appointment->getId() && $a->getDate() > new DateTime();
+            }))
+        ];
+
+
     }
 
     public function createAppointment($request): array
     {
-        try {
-            $appointment = $this->serializer->deserialize($request->getContent(), Appointment::class, 'json');
+        $appointment = $this->serializer->deserialize($request->getContent(), Appointment::class, 'json');
 
-            $em = $this->doctrine->getManager();
-            $em->persist($appointment);
-            $em->flush();
-
+        if (!$appointment) {
             return [
-                'message' => 'Appointment Added!',
-                'code' => 200,
-                'data' => $appointment
-            ];
-        } catch (Exception $e) {
-            return [
-                'message' => 'Creating Fail',
+                'error' => 'Failed to add',
                 'code' => 500,
-
             ];
         }
+
+        $em = $this->doctrine->getManager();
+        $em->persist($appointment);
+        $em->flush();
+
+        return [
+            'message' => 'Appointment Added!',
+            'code' => 200,
+            'data' => $appointment
+        ];
+
     }
 
     public function updateAppointment($appointment, $request): array
@@ -108,7 +111,7 @@ class AppointmentService
             ];
         } catch (Exception $e) {
             return [
-                'message' => 'Update Fail',
+                'error' => 'Update Fail',
                 'code' => 500,
             ];
         }
@@ -128,7 +131,7 @@ class AppointmentService
             ];
         } catch (Exception $e) {
             return [
-                'message' => 'Delete Fail',
+                'error' => 'Delete Fail',
                 'code' => 500,
             ];
         }
