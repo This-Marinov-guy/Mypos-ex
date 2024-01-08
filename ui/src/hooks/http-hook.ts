@@ -1,22 +1,16 @@
 import {useCallback, useState} from "react";
 import axios from 'axios';
+import {useNotification} from "../store/NotificationStore";
 
 export const useHttpClient = () => {
     const [loading, setLoading] = useState<boolean>(false);
 
-    const [error, setError] = useState<{
-        code: number,
-        message: string
-    }>({
-        code: 0,
-        message: ''
-    })
+    const {addError, clearError} = useNotification();
 
-    const sendRequest = useCallback(
-        async (
+    const sendRequest = async (
             url: string,
             method: string = "GET",
-            data: BodyInit | null = null,
+            data: any = null,
         ) => {
             setLoading(true);
 
@@ -28,23 +22,22 @@ export const useHttpClient = () => {
                 });
 
                 const responseData = response.data;
+
+                if (responseData.error) {
+                    addError(
+                        responseData.error,
+                        responseData.code,
+                    )
+                    setTimeout(()=> clearError(), 6000)
+                    return
+                }
+
                 return responseData;
             } catch (err: any) {
-                setError({
-                    code: err.code,
-                    message: err.message
-                })
-                setTimeout(()=> setError({
-                    code: 0,
-                    message: ''
-                }), 6000)
-                throw err;
             } finally {
                 setLoading(false);
             }
-        },
-        []
-    );
+        }
 
-    return {loading, sendRequest, error};
+    return {loading, sendRequest};
 };

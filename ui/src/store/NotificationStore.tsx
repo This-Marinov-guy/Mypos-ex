@@ -2,24 +2,39 @@ import React, {createContext, useContext, useState} from 'react';
 import {action, makeAutoObservable, observable} from "mobx"
 
 export class NotificationStore {
-    notification: {message: string, code: number} = {
+    success: {message: string, code: number} = {
         message: '',
-        code: 0,
+        code: 200,
+    };
+
+    error: {message: string, code: number} = {
+        message: '',
+        code: 500,
     };
     constructor() {
         makeAutoObservable(this, {
-            notification: observable,
+            success: observable,
         })
     }
 
-    addNotification = action((message: string, code: number) => {
-        this.notification.message = message
-        this.notification.code = code
+    addSuccess = action((message: string, code: number) => {
+        this.success.message = message
+        this.success.code = code
     })
 
-    clearNotification = action((id: number) => {
-        this.notification.message = ''
-        this.notification.code = 0
+    clearSuccess = action(() => {
+        this.success.message = ''
+        this.success.code = 0
+    })
+
+    addError = action((message: string, code: number) => {
+        this.error.message = message
+        this.error.code = code
+    })
+
+    clearError = action(() => {
+        this.error.message = ''
+        this.error.code = 0
     })
 }
 

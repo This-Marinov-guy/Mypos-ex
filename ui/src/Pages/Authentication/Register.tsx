@@ -2,10 +2,10 @@ import React from "react";
 import * as yup from "yup";
 import YupPassword from 'yup-password'
 import {useHttpClient} from "../../hooks/http-hook";
-import moment from "moment/moment";
 import {ErrorMessage, Field, Form, Formik} from "formik";
 import {useNotification} from "../../store/NotificationStore";
 import {useNavigate} from "react-router-dom";
+import {useUser} from "../../store/UserStore";
 
 YupPassword(yup)
 
@@ -20,7 +20,7 @@ const schema = yup.object().shape({
         ),
     email: yup.string().email(),
     password: yup.string()
-        // .password().required()
+    // .password().required()
 });
 
 const Register = () => {
@@ -28,7 +28,9 @@ const Register = () => {
 
     const navigate = useNavigate()
 
-    const {addNotification, clearNotification} = useNotification()
+    const {addSuccess, clearSuccess} = useNotification()
+
+    const {login} = useUser()
 
     return (
         <div className="dashed-border">
@@ -38,20 +40,26 @@ const Register = () => {
                 validationSchema={schema}
                 onSubmit={async (values) => {
                     try {
-                    const responseData = await sendRequest(
-                        '/user/register',
-                        "POST",
-                        JSON.stringify({
-                            ...values,
-                        })
-                    );
-                    if (responseData.code == 200) {
-                        addNotification(responseData.message, responseData.code);
-                        setTimeout(clearNotification, 5000);
-                        navigate('/user/login')
+                        const responseData = await sendRequest(
+                            '/user/register',
+                            'POST',
+                            values
+                        );
+                        if (responseData.code == 200) {
+                            const responseLoginData = await sendRequest(
+                                '/user/login',
+                                'POST',
+                                {email: values.email, password: values.password}
+                            );
+                            if (responseLoginData.token) {
+                                login(responseLoginData.token)
+                                addSuccess(responseData.message, responseData.code);
+                                setTimeout(clearSuccess, 5000);
+                                navigate('/')
+                            }
+                        }
+                    } catch (err) {
                     }
-                } catch (err) {
-                }
                 }}
                 initialValues={
                     {
@@ -102,7 +110,8 @@ const Register = () => {
                                 name="password"
                                 component="div"
                             />{" "}
-                            <p className='info text-sm w-full break-words'>Password must be at least 8 symbols and contain uppercase letter, number and a symbol</p>
+                            <p className='info text-sm w-full break-words'>Password must be at least 8 symbols and
+                                contain uppercase letter, number and a symbol</p>
                         </div>
                         {!loading ? (
                             <button disabled={false} type="submit" className="btn-primary mt-4">

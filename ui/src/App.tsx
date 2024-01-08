@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {observer} from "mobx-react-lite"
 import {BrowserRouter as Router, Navigate, Route, Routes} from "react-router-dom";
 import {useNotification} from "./store/NotificationStore";
@@ -11,22 +11,29 @@ import DetailsAppointment from "./Pages/DetailsAppointment";
 import AddAppointment from "./Pages/AddAppointment";
 import EditAppointment from "./Pages/EditAppointment";
 import NavBar from "./Components/Navigation/NavBar";
-import Notification from "./Components/UI/Notification";
+import Success from "./Components/UI/Success";
 import Register from "./Pages/Authentication/Register";
 import Login from "./Pages/Authentication/Login";
 import ResetPassword from "./Pages/Authentication/ResetPassword";
 import Error from "./Components/UI/Error";
-import {useHttpClient} from "./hooks/http-hook";
+import {useUser} from "./store/UserStore";
 
 const App = observer(() => {
-    const {notification} = useNotification();
-    const {error} = useHttpClient()
+    const {success, error} = useNotification();
 
+    const {login} = useUser();
+
+    useEffect(() => {
+        const token = localStorage.getItem("token")
+        if (token) {
+            login(token)
+        }
+    }, []);
     return (
         <Router basename={"/"}>
             <NavBar/>
             {error.message && <Error/>}
-            {notification.message && <Notification/>}
+            {success.message && <Success/>}
             <AppointmentProvider>
                 <Routes>
                     <Route path={`/`} element={<ListAppointments/>}/>

@@ -11,21 +11,19 @@ const AddAppointment = () => {
 
     const {addAppointment} = useAppointment();
 
-    const {addNotification, clearNotification} = useNotification();
+    const {addSuccess, clearSuccess} = useNotification();
 
     const handleSubmit = async (values: AppointmentData) => {
         try {
             const responseData = await sendRequest(
                 "/appointment/add",
                 "POST",
-                JSON.stringify({
-                    ...values,
-                })
+                values
             );
             if (responseData.code == 200) {
                 addAppointment(responseData.data);
-                addNotification(responseData.message,responseData.code);
-                setTimeout(clearNotification, 5000);
+                addSuccess(responseData.message,responseData.code);
+                setTimeout(clearSuccess, 5000);
             }
         } catch (err) {
         }

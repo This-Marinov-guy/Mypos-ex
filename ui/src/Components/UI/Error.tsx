@@ -1,10 +1,10 @@
 import React from "react";
 import { observer } from "mobx-react-lite"
-import {useHttpClient} from "../../hooks/http-hook";
+import {useNotification} from "../../store/NotificationStore";
 
 const Error = observer(() => {
 
-    const {error} = useHttpClient()
+    const {error} = useNotification()
 
     return (
         <div

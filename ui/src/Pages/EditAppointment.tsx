@@ -21,7 +21,7 @@ const EditAppointment = () => {
 
     const {editAppointment} = useAppointment()
 
-    const {addNotification, clearNotification} = useNotification()
+    const {addSuccess, clearSuccess} = useNotification()
 
     const {id} = useParams();
 
@@ -48,14 +48,12 @@ const EditAppointment = () => {
             const responseData = await sendRequest(
                 `/appointment/edit/${id}`,
                 "PUT",
-                JSON.stringify({
-                    ...values,
-                })
+                values,
             );
             if (responseData.code == 200) {
                 editAppointment(Number(id), responseData.data)
-                addNotification(responseData.message, responseData.code);
-                setTimeout(clearNotification, 5000);
+                addSuccess(responseData.message, responseData.code);
+                setTimeout(clearSuccess, 5000);
             }
         } catch (err) {
         }

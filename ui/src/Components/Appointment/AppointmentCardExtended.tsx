@@ -16,7 +16,7 @@ const AppointmentCardExtended = (props: AppointmentData) => {
 
     const {deleteAppointment} = useAppointment();
 
-    const {addNotification, clearNotification} = useNotification();
+    const {addSuccess, clearSuccess} = useNotification();
 
     const navigate  = useNavigate()
     const handleDelete = async () => {
@@ -27,8 +27,8 @@ const AppointmentCardExtended = (props: AppointmentData) => {
             );
             if (responseData.code == 200) {
                 deleteAppointment(responseData.data)
-                addNotification(responseData.message,responseData.code);
-                setTimeout(clearNotification, 5000);
+                addSuccess(responseData.message,responseData.code);
+                setTimeout(clearSuccess, 5000);
                 navigate('/');
             }
         } catch (err) {
