@@ -5,3 +5,4 @@ export default interface AppointmentData {
   egn: string;
   details: string;
 }
+

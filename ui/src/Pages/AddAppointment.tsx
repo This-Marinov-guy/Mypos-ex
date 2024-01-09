@@ -4,6 +4,7 @@ import AppointmentForm from "../Components/Form/AppointmentForm";
 import AppointmentData from "../interface/AppointmentInterface";
 import {useAppointment} from "../store/AppointmentStore";
 import {useNotification} from "../store/NotificationStore";
+import {useUser} from "../store/UserStore";
 
 
 const AddAppointment = () => {
@@ -13,12 +14,14 @@ const AddAppointment = () => {
 
     const {addSuccess, clearSuccess} = useNotification();
 
+    const {user} = useUser()
+
     const handleSubmit = async (values: AppointmentData) => {
         try {
             const responseData = await sendRequest(
-                "/appointment/add",
+                `/appointment/${user.id}/add`,
                 "POST",
-                values
+                {user, ...values}
             );
             if (responseData.code == 200) {
                 addAppointment(responseData.data);

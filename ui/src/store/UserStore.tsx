@@ -5,6 +5,7 @@ import User from "../interface/UserInterface";
 export class UserStore {
     user: User = {
         token: '',
+        id: 0,
         roles: [],
     }
 
@@ -24,6 +25,7 @@ export class UserStore {
     logout = action(() => {
         this.user = {
             token: '',
+            id: 0,
             roles: [],
         }
         localStorage.removeItem("user");

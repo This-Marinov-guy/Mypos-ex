@@ -33,6 +33,7 @@ const Login = () => {
             if (responseData.token) {
                 login({
                     token: responseData.token,
+                    id: responseData.data.id,
                     roles: responseData.data.roles
                 });
                 addSuccess(responseData.message, responseData.code);

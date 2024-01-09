@@ -16,7 +16,7 @@ const DetailsAppointment = () => {
 
     const [userAppointments, setUserAppointments] = useState<AppointmentData[]>([])
 
-    const {id} = useParams();
+    const {appointmentId} = useParams();
 
     const {loading, sendRequest} = useHttpClient();
 
@@ -26,13 +26,13 @@ const DetailsAppointment = () => {
 
     const fetchData = async () => {
         try {
-            const responseData = await sendRequest(`/appointment/${id}`);
+            const responseData = await sendRequest(`/appointment/${appointmentId}`);
             if (!responseData) {
                 setAppointmentNotFound(true);
             } else {
                 setAppointment(responseData);
                 const responseUserData = await sendRequest(
-                    `/user-appointments/${id}`
+                    `/user-appointments/${appointmentId}`
                 );
                 setUserAppointments(
                     responseUserData.data
@@ -45,7 +45,7 @@ const DetailsAppointment = () => {
 
     useEffect(() => {
         fetchData();
-    }, [id]);
+    }, [appointmentId]);
 
     if (loading) {
         return <p className="text-center">Loading...</p>;
@@ -55,7 +55,7 @@ const DetailsAppointment = () => {
         return (
             <React.Fragment>
                 <AppointmentCardExtended
-                    key={id}
+                    key={appointmentId}
                     id={appointment.id}
                     date={appointment.date}
                     name={appointment.name}

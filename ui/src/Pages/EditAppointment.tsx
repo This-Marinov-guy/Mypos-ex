@@ -5,14 +5,13 @@ import AppointmentForm from "../Components/Form/AppointmentForm";
 import AppointmentData from "../interface/AppointmentInterface";
 import {useAppointment} from "../store/AppointmentStore";
 import {useNotification} from "../store/NotificationStore";
+import AppointmentFormInterface from "../interface/AppointmentFormInterface";
 
 
 const EditAppointment = () => {
-    const [initialValues, setInitialValues] = useState<AppointmentData>({
+    const [initialValues, setInitialValues] = useState<AppointmentFormInterface>({
         id: 0,
         date: "",
-        name: "",
-        egn: "",
         details: "",
     });
 
@@ -23,35 +22,36 @@ const EditAppointment = () => {
 
     const {addSuccess, clearSuccess} = useNotification()
 
-    const {id} = useParams();
+    const {appointmentId} = useParams();
 
     const {sendRequest} = useHttpClient();
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const responseData = await sendRequest(`/appointment/${id}`);
+                const responseData = await sendRequest(`/appointment/${appointmentId}`);
                 if (!responseData) {
                     setAppointmentNotFound(true);
                 }
-                setInitialValues(responseData);
+                const {name, egn, ...rest} = responseData
+                setInitialValues(rest);
             } catch (error) {
                 setAppointmentNotFound(true);
             }
         };
 
         fetchData();
-    }, [id]);
+    }, [appointmentId]);
 
     const handleSubmit = async (values: AppointmentData) => {
         try {
             const responseData = await sendRequest(
-                `/appointment/edit/${id}`,
+                `/appointment/edit/${appointmentId}`,
                 "PUT",
                 values,
             );
             if (responseData.code == 200) {
-                editAppointment(Number(id), responseData.data)
+                editAppointment(Number(appointmentId), responseData.data)
                 addSuccess(responseData.message, responseData.code);
                 setTimeout(clearSuccess, 5000);
             }
