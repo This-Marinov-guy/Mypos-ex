@@ -49,7 +49,7 @@ const Register = () => {
                             const responseLoginData = await sendRequest(
                                 '/user/login',
                                 'POST',
-                                {email: values.email, password: values.password}
+                                {username: values.email, password: values.password}
                             );
                             if (responseData.token) {
                                 login({
