@@ -51,7 +51,7 @@ const Register = () => {
                                 'POST',
                                 {username: values.email, password: values.password}
                             );
-                            if (responseData.token) {
+                            if (responseLoginData.token) {
                                 login({
                                     token: responseData.token,
                                     id: responseData.data.id,
