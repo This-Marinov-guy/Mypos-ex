@@ -25,11 +25,10 @@ class UserController extends AbstractController
     }
 
     #[Route('/user/reset-password', name: 'user_reset_password')]
-    public function resetPassword(): Response
+    public function resetPassword(Request $request, UserService $userService): Response
     {
-        return $this->render('user/index.html.twig', [
-            'controller_name' => 'UserController',
-        ]);
+        return $this->json($userService->resetPassword($request));
+
     }
 
 }
