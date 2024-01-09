@@ -51,8 +51,11 @@ const Register = () => {
                                 'POST',
                                 {email: values.email, password: values.password}
                             );
-                            if (responseLoginData.token) {
-                                login(responseLoginData.token)
+                            if (responseData.token) {
+                                login({
+                                    token: responseData.token,
+                                    roles: responseData.data.roles
+                                });
                                 addSuccess(responseData.message, responseData.code);
                                 setTimeout(clearSuccess, 5000);
                                 navigate('/')

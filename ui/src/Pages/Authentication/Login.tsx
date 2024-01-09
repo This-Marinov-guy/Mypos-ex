@@ -6,7 +6,7 @@ import {useUser} from "../../store/UserStore";
 
 const Login = () => {
     const [loginFormValues, setLoginFormValues] = useState({
-        email: "",
+        username: "",
         password: "",
     });
 
@@ -31,7 +31,10 @@ const Login = () => {
                 loginFormValues
             );
             if (responseData.token) {
-                login(responseData.token);
+                login({
+                    token: responseData.token,
+                    roles: responseData.data.roles
+                });
                 addSuccess(responseData.message, responseData.code);
                 setTimeout(clearSuccess, 5000);
                 navigate('/')
@@ -48,8 +51,8 @@ const Login = () => {
                     <label>Email</label>
                     <input
                         type="text"
-                        name="email"
-                        value={loginFormValues.email}
+                        name="username"
+                        value={loginFormValues.username}
                         onChange={(event) => changeFormInputHandler(event)}
                     ></input>
                 </div>

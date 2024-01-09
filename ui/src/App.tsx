@@ -24,11 +24,13 @@ const App = observer(() => {
     const {login} = useUser();
 
     useEffect(() => {
-        const token = localStorage.getItem("token")
-        if (token) {
-            login(token)
+        const user = JSON.parse(localStorage.getItem("user")!)
+        if (user) {
+            login(user)
         }
+
     }, []);
+
     return (
         <Router basename={"/"}>
             <NavBar/>

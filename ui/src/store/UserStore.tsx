@@ -3,24 +3,30 @@ import {action, makeAutoObservable, observable} from "mobx"
 import User from "../interface/UserInterface";
 
 export class UserStore {
-    token: string = ''
+    user: User = {
+        token: '',
+        roles: [],
+    }
 
     constructor() {
         makeAutoObservable(this, {
-            token: observable,
+            user: observable,
         })
     }
 
-    login = action((token:string) => {
-        this.token = token
-        localStorage.setItem("token", token);
-
+    login = action((user: User) => {
+        this.user = user
+        localStorage.setItem(
+            "user", JSON.stringify(user)
+        )
     })
 
     logout = action(() => {
-        this.token = ''
-        localStorage.removeItem("token");
-
+        this.user = {
+            token: '',
+            roles: [],
+        }
+        localStorage.removeItem("user");
     })
 }
 
