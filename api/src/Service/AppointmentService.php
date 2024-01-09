@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\Appointment;
 use App\Repository\AppointmentRepository;
+use App\Repository\RoomRepository;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
@@ -12,7 +13,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class AppointmentService
 {
-    public function __construct(private AppointmentRepository $appointmentRepository, private ManagerRegistry $doctrine, private SerializerInterface $serializer)
+    public function __construct(private AppointmentRepository $appointmentRepository, private RoomRepository $roomRepository, private ManagerRegistry $doctrine, private SerializerInterface $serializer)
     {
     }
 
@@ -70,7 +71,7 @@ class AppointmentService
 
     }
 
-    public function createAppointment($request): array
+    public function createAppointment($request, $user): array
     {
         $appointment = $this->serializer->deserialize($request->getContent(), Appointment::class, 'json');
 
@@ -81,14 +82,40 @@ class AppointmentService
             ];
         }
 
+        $rooms = $this->roomRepository->findAll();
+        $LIMIT = 4;
+        $targetRoom = $rooms[0]->getSize() < $LIMIT ? $rooms[0] : null ;
+
+        for ($x = 0; $x < count($rooms); $x++) {
+            if ( $targetRoom && $rooms[$x]->getSize() < $targetRoom->getSize()) {
+                if ($rooms[$x]->getSize() < $LIMIT) {
+                    $targetRoom = $rooms[$x];
+                }
+            }
+        }
+
+        if (!$targetRoom) {
+            return [
+                'error' => 'All rooms are full',
+                'code' => 500,
+            ];
+        }
+
+        $appointment->setName($user->getName());
+        $appointment->setEgn($user->getEgn());
+        $appointment->setRoom($targetRoom);
+        $appointment->setUser($user);
+
         $em = $this->doctrine->getManager();
+        $em->persist($targetRoom);
         $em->persist($appointment);
+        $em->persist($user);
         $em->flush();
 
         return [
             'message' => 'Appointment Added!',
             'code' => 200,
-            'data' => $appointment
+            'data' => ['groups' => 'appointment','user', 'room']
         ];
 
     }

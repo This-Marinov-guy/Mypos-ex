@@ -10,6 +10,7 @@ use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactory;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Serializer\Encoder\EncoderInterface;
 use Symfony\Component\Serializer\SerializerInterface;
+use function Sodium\compare;
 
 class UserService
 {
@@ -28,7 +29,10 @@ class UserService
                 $password,
             );
 
-            $user->setRoles(array('USER_ADMIN'));
+//            admin bob.bob@gmail
+//              123
+            $user->setRoles(array('ROLE_USER'));
+//            $user->setRoles(array('ROLE_USER', 'ROLE_ADMIN'));
             $user->setPassword($hashedPassword);
 
             $em = $this->doctrine->getManager();

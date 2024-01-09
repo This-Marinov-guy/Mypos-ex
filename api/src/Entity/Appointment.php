@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\AppointmentRepository;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -10,6 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 class Appointment
 {
+    #[Groups('appointments')]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -36,6 +38,16 @@ class Appointment
     #[Assert\Length(10)]
 
     private ?string $details;
+
+    #[Groups('appointments')]
+    #[ORM\ManyToOne(inversedBy: 'appointments')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
+
+    #[Groups('appointments')]
+    #[ORM\ManyToOne(inversedBy: 'appointments')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Room $room = null;
 
     public function getId(): ?int
     {
@@ -86,6 +98,30 @@ class Appointment
     public function setDetails(string $details): static
     {
         $this->details = $details;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getRoom(): ?Room
+    {
+        return $this->room;
+    }
+
+    public function setRoom(?Room $room): static
+    {
+        $this->room = $room;
 
         return $this;
     }
