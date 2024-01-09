@@ -4,49 +4,54 @@ namespace App\Service;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
-use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
-use Exception;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\HttpException;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserService
 {
-    public function __construct(private UserRepository $userRepository, private ManagerRegistry $doctrine, private SerializerInterface $serializer, private UserPasswordHasherInterface $passwordHasher)
+    public function __construct(private UserRepository $userRepository, private ManagerRegistry $doctrine, private SerializerInterface $serializer, private UserPasswordHasherInterface $passwordHasher, private TokenStorageInterface $tokenStorageInterface,private JWTTokenManagerInterface $jwtManager)
     {
     }
 
-    public function createUser($request)
+    public function createUser($request): array
     {
-            if ($this->userRepository->findOneByEmail( $request->query->get('email'))) {
+            try {
+                $user = $this->serializer->deserialize($request->getContent(), User::class, 'json');
+                $hashedPassword = $this->passwordHasher->hashPassword(
+                    $user,
+                    $request->query->get('password', '123'),
+                );
+
+                $user->setRoles(array('USER_ADMIN'));
+                $user->setPassword($hashedPassword);
+
+                $em = $this->doctrine->getManager();
+                $em->persist($user);
+                $em->flush();
+
                 return [
-                    'error' => 'User Already exists',
-                    'code' => 500,
+                    'message' => 'User registered!',
+                    'code' => 200,
+                    'data' => $user
                 ];
+            } catch (\Exception $e) {
+                if ($e->getCode() == 19) {
+                    return [
+                        'error' => 'User already exists',
+                        'code' => $e->getCode()
+                    ];
+                } else {
+                    return [
+                        'error' => 'Server error',
+                        'code' => $e->getCode()
+                    ];
+                }
             }
-
-            $user = $this->serializer->deserialize($request->getContent(), User::class, 'json');
-            $hashedPassword = $this->passwordHasher->hashPassword(
-                $user,
-                $request->query->get('password'),
-            );
-
-            $user->setRoles(array('USER_ADMIN'));
-            $user->setPassword($hashedPassword);
-
-            $em = $this->doctrine->getManager();
-            $em->persist($user);
-            $em->flush();
-
-            return [
-                'error' => 'User registered!',
-                'code' => 200,
-                'data' => $user
-            ];
-
-
     }
+
 
 }
