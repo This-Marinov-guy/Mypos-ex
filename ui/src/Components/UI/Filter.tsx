@@ -12,6 +12,7 @@ const Filter = () => {
     name: searchParams.get("name") || "",
     egn: searchParams.get("egn") || "",
     details: searchParams.get("details") || "",
+    room: searchParams.get("room") || "",
   });
 
   const handleInputChange = (
@@ -41,6 +42,7 @@ const Filter = () => {
       name: "",
       egn: "",
       details: "",
+      room: "",
     });
     if (searchParams.get("page")) {
       setSearchParams({ page: `${searchParams.get("page")}` });
@@ -54,45 +56,56 @@ const Filter = () => {
       <div className="mb-8 mt-4 flex flex-wrap gap-2">
         <div className="flex flex-nowrap items-center">
           <input
-            value={filterForm.dateFrom}
-            onChange={(e) => handleInputChange(e, "dateFrom")}
-            type="date"
-            placeholder="Date from"
-            className="input-filter-l w-28"
+              value={filterForm.dateFrom}
+              onChange={(e) => handleInputChange(e, "dateFrom")}
+              type="date"
+              placeholder="Date from"
+              className="input-filter-l w-28"
           />
           <input
-            value={filterForm.dateTo}
-            onChange={(e) => handleInputChange(e, "dateTo")}
-            type="date"
-            placeholder="Date to"
-            className="input-filter-r w-28"
+              value={filterForm.dateTo}
+              onChange={(e) => handleInputChange(e, "dateTo")}
+              type="date"
+              placeholder="Date to"
+              className="input-filter-r w-28"
           />
         </div>
 
         <div className="flex flex-nowrap items-center">
           <input
-            value={filterForm.name}
-            onChange={(e) => handleInputChange(e, "name")}
-            type="text"
-            placeholder="Name"
-            className="input-filter-l w-28"
+              value={filterForm.name}
+              onChange={(e) => handleInputChange(e, "name")}
+              type="text"
+              placeholder="Name"
+              className="input-filter-l w-28"
           />
           <input
-            value={filterForm.egn}
-            onChange={(e) => handleInputChange(e, "egn")}
-            type="text"
-            placeholder="EGN"
-            className="input-filter w-28"
+              value={filterForm.egn}
+              onChange={(e) => handleInputChange(e, "egn")}
+              type="text"
+              placeholder="EGN"
+              className="input-filter-r w-28"
           />
         </div>
         <div className="flex flex-nowrap items-center">
           <div className="flex flex-nowrap items-center">
             <input
-              value={filterForm.details}
-              onChange={(e) => handleInputChange(e, "details")}
-              type="text"
-              placeholder="Details"
-              className="input-filter w-28"
+                value={filterForm.details}
+                onChange={(e) => handleInputChange(e, "details")}
+                type="text"
+                placeholder="Details"
+                className="input-filter-l w-28"
+            />
+          </div>
+        </div>
+        <div className="flex flex-nowrap items-center">
+          <div className="flex flex-nowrap items-center">
+            <input
+                value={filterForm.room}
+                onChange={(e) => handleInputChange(e, "room")}
+                type="text"
+                placeholder="Room"
+                className="input-filter-r w-28"
             />
           </div>
         </div>

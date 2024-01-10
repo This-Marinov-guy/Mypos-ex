@@ -29,10 +29,8 @@ class UserService
                 $password,
             );
 
-//            admin bob.bob@gmail
-//              123
-            $user->setRoles(array('ROLE_USER'));
-//            $user->setRoles(array('ROLE_USER', 'ROLE_ADMIN'));
+//            $user->setRoles(array('ROLE_USER'));
+            $user->setRoles(array('ROLE_USER', 'ROLE_ADMIN'));
             $user->setPassword($hashedPassword);
 
             $em = $this->doctrine->getManager();

@@ -10,20 +10,23 @@ const AppointmentCard = (props: AppointmentData) => {
   const expired = new Date(props.date) < new Date();
 
   return (
-    <Link
-      to={`/appointment/${props.id}`}
-      className={`flex flex-col items-start justify-around basic-card ${
-        expired && "bg-red-200"
-      }`}
-    >
-      <h2 className="text-lg font-bold">
-        {formattedDate + " | " + formattedTime}
-      </h2>
-      {expired && <p className="font-bold">Expired</p>}
-      <p className="text-sm">Name: {props.name}</p>
-      <p className="text-sm">EGN: {props.egn}</p>
-      <p className="text-sm">Details: {props.details}</p>
-    </Link>
+      <Link
+          to={`/appointment/${props.id}`}
+          className={`flex flex-col items-start justify-around basic-card ${
+              expired && "bg-red-200"
+          }`}
+      >
+        <h2 className="text-lg font-bold">
+          Room: {props.roomId}
+        </h2>
+        <h2 className="text-lg font-bold">
+          {formattedDate + " | " + formattedTime}
+        </h2>
+        {expired && <p className="font-bold">Expired</p>}
+        <p className="text-sm">Name: {props.name}</p>
+        <p className="text-sm">EGN: {props.egn}</p>
+        <p className="text-sm">Details: {props.details}</p>
+      </Link>
   );
 };
 

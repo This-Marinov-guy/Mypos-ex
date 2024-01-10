@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Entity\Appointment;
 use App\Repository\AppointmentRepository;
 use App\Repository\RoomRepository;
+use App\Repository\UserRepository;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
@@ -13,15 +14,15 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class AppointmentService
 {
-    public function __construct(private AppointmentRepository $appointmentRepository, private RoomRepository $roomRepository, private ManagerRegistry $doctrine, private SerializerInterface $serializer)
+    public function __construct(private AppointmentRepository $appointmentRepository, private RoomRepository $roomRepository, private UserRepository $userRepository, private ManagerRegistry $doctrine, private SerializerInterface $serializer)
     {
     }
 
     public function filterPaginated(Request $request): array
     {
         $filters = array_combine(
-            ['dateFrom', 'dateTo', 'name', 'egn', 'details'],
-            array_map(fn($param) => $request->query->get($param), ['dateFrom', 'dateTo', 'name', 'egn', 'details'])
+            ['dateFrom', 'dateTo', 'name', 'egn', 'details', 'room'],
+            array_map(fn($param) => $request->query->get($param), ['dateFrom', 'dateTo', 'name', 'egn', 'details', 'room'])
         );
 
         $page = $request->query->get('page') ?: 1;
@@ -49,31 +50,53 @@ class AppointmentService
 
     }
 
-    public function filterName($appointment): array
-    {
-        $appointments = $this->appointmentRepository->findBy(['name' => $appointment->getName()], ['date' => 'ASC']);
+    public function extendAppointment($appointment): array {
+        return [
+            'id' =>  $appointment->getId(),
+            'date' => $appointment->getDate(),
+            'details' => $appointment->getDetails(),
+            'roomId' => $appointment->getRoom()->getId(),
+            'name' => $appointment->getUser()->getName(),
+            'egn' => $appointment->getUser()->getEgn()
+        ];
+    }
 
-        if (!$appointments) {
+    public function extendAppointmentList($appointments): array {
+       return array_map(function ($a) {
             return [
-                'error' => 'fail',
-                'code' => 500,
+                'id' =>  $a->getId(),
+                'date' => $a->getDate(),
+                'details' => $a->getDetails(),
+                'roomId' => $a->getRoom()->getId(),
+                'name' => $a->getUser()->getName(),
+                'egn' => $a->getUser()->getEgn()
             ];
-        }
+        }, $appointments->toArray());
+    }
+    public function filterName($userid, $appointmentId): array
+    {
+        $appointments = $this->userRepository->find($userid)->getAppointments()->toArray();
+
+        $filteredAppointments = array_values(array_filter($appointments, function ($a) use ($appointmentId) {
+            return $a->getId() !== $appointmentId && $a->getDate() > new DateTime();
+        }));
+
+        $extendedFilteredAppointments =  $this->extendAppointmentList($filteredAppointments);
 
         return [
             'message' => 'success',
             'code' => 200,
-            'data' => array_values(array_filter($appointments, function ($a) use ($appointment) {
-                return $a->getId() !== $appointment->getId() && $a->getDate() > new DateTime();
-            }))
+            'data' => $extendedFilteredAppointments
         ];
-
-
     }
 
-    public function createAppointment($request, $user): array
+    public function createAppointment($request): array
     {
         $appointment = $this->serializer->deserialize($request->getContent(), Appointment::class, 'json');
+
+        ['userId' => $userId] = json_decode($request->getContent(), true);
+
+        $user = $this->userRepository->find($userId);
 
         if (!$appointment) {
             return [
@@ -101,8 +124,6 @@ class AppointmentService
             ];
         }
 
-        $appointment->setName($user->getName());
-        $appointment->setEgn($user->getEgn());
         $appointment->setRoom($targetRoom);
         $appointment->setUser($user);
 

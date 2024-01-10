@@ -4,6 +4,7 @@ import {useHttpClient} from "../hooks/http-hook";
 import AppointmentCardExtended from "../Components/Appointment/AppointmentCardExtended";
 import AppointmentList from "../Components/Appointment/AppointmentList";
 import AppointmentData from "../interface/AppointmentInterface";
+import {useUser} from "../store/UserStore";
 
 const DetailsAppointment = () => {
     const [appointment, setAppointment] = useState<AppointmentData>({
@@ -20,19 +21,20 @@ const DetailsAppointment = () => {
 
     const {loading, sendRequest} = useHttpClient();
 
+    const {user} = useUser()
 
     const [appointmentNotFound, setAppointmentNotFound] =
         useState<boolean>(false);
 
     const fetchData = async () => {
         try {
-            const responseData = await sendRequest(`/appointment/${appointmentId}`);
+            const responseData = await sendRequest(`/appointments/${appointmentId}`);
             if (!responseData) {
                 setAppointmentNotFound(true);
             } else {
                 setAppointment(responseData);
                 const responseUserData = await sendRequest(
-                    `/user-appointments/${appointmentId}`
+                    `/user-appointments/${user.id}/${appointmentId}`
                 );
                 setUserAppointments(
                     responseUserData.data
@@ -57,6 +59,7 @@ const DetailsAppointment = () => {
                 <AppointmentCardExtended
                     key={appointmentId}
                     id={appointment.id}
+                    roomId={appointment.roomId}
                     date={appointment.date}
                     name={appointment.name}
                     egn={appointment.egn}

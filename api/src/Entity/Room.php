@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\Ignore;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 #[ORM\Entity(repositoryClass: RoomRepository::class)]
@@ -18,7 +19,8 @@ class Room
     private ?int $id = null;
 
     #[MaxDepth(1)]
-    #[ORM\OneToMany(mappedBy: 'room', targetEntity: Appointment::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'room', targetEntity: Appointment::class, fetch: 'EXTRA_LAZY', orphanRemoval: true)]
+    #[Ignore]
     private Collection $appointments;
 
     public function __construct()

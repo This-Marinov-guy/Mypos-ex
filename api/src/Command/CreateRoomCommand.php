@@ -19,7 +19,7 @@ class CreateRoomCommand extends Command
     {
         $this
             // the name of the command (the part after "app/console")
-            ->setName('app:create-room')
+            ->setName('create-room')
             // the short description shown while running "php app/console list"
             ->setDescription('Creates a new room.');
     }

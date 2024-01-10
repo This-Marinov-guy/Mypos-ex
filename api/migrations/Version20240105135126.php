@@ -20,7 +20,7 @@ final class Version20240105135126 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, email VARCHAR(180) NOT NULL, name VARCHAR(255) NOT NULL, egn VARCHAR(255) NOT NULL, roles CLOB NOT NULL --(DC2Type:json)
+        $this->addSql('CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, email VARCHAR(180) NOT NULL, roles CLOB NOT NULL --(DC2Type:json)
         , password VARCHAR(255) NOT NULL)');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_8D93D649E7927C74 ON user (email)');
         $this->addSql('DROP TABLE appointment_2');
@@ -29,7 +29,7 @@ final class Version20240105135126 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE TABLE appointment_2 (id INTEGER DEFAULT NULL, date DATETIME DEFAULT NULL, name VARCHAR(255) DEFAULT NULL COLLATE "BINARY", egn VARCHAR(255) DEFAULT NULL COLLATE "BINARY", details VARCHAR(255) DEFAULT NULL COLLATE "BINARY")');
+        $this->addSql('CREATE TABLE appointment_2 (id INTEGER DEFAULT NULL, date DATETIME DEFAULT NULL, details VARCHAR(255) DEFAULT NULL COLLATE "BINARY")');
         $this->addSql('DROP TABLE user');
     }
 }

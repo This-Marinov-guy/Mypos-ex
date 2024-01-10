@@ -41,7 +41,7 @@ const App = observer(() => {
                     {user.token ? <Fragment>
                             {user.roles.includes("ROLE_ADMIN") ? <Fragment>
                                     <Route path={`/`} element={<ListRooms/>}/>
-                                    <Route path={`/:roomId/appointments`} element={<ListRooms/>}/>
+                                    <Route path={`/:roomId/appointments`} element={<ListAppointments/>}/>
                                 </Fragment>
                                 :
                                 <Route path={`/`} element={<ListAppointments/>}/>}
@@ -56,7 +56,6 @@ const App = observer(() => {
                             <Route path={`/profile/log-in`} element={<Login/>}/>
                             <Route path={`/profile/reset-password`} element={<ResetPassword/>}/>
                         </Fragment>}
-                    <Route path="*" element={<Navigate to="/" replace/>}/>
                 </Routes>
             </AppointmentProvider>
         </Router>

@@ -14,6 +14,7 @@ const AppointmentList = (props: AppointmentListInterface) => {
               <AppointmentCard
                 key={index}
                 id={appointment.id}
+                roomId={appointment.roomId}
                 date={appointment.date}
                 name={appointment.name}
                 egn={appointment.egn}

@@ -19,13 +19,13 @@ const AddAppointment = () => {
     const handleSubmit = async (values: AppointmentData) => {
         try {
             const responseData = await sendRequest(
-                `/appointment/${user.id}/add`,
+                `/appointments/add`,
                 "POST",
-                {user, ...values}
+                {userId: user.id, ...values}
             );
             if (responseData.code == 200) {
                 addAppointment(responseData.data);
-                addSuccess(responseData.message,responseData.code);
+                addSuccess(responseData.message, responseData.code);
                 setTimeout(clearSuccess, 5000);
             }
         } catch (err) {

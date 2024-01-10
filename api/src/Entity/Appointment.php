@@ -24,16 +24,6 @@ class Appointment
 
     private ?\DateTimeInterface $date;
 
-    #[ORM\Column(length: 255)]
-    #[Assert\NotBlank]
-
-    private ?string $name;
-
-    #[ORM\Column]
-    #[Assert\NotBlank]
-    #[Assert\Regex(pattern: "/^(?:[0-9]){10}$/", message: "The value must be exactly 10 digits.")]
-    private ?string $egn;
-
     #[MaxDepth(1)]
     #[ORM\Column(length: 1000)]
     #[Assert\NotBlank]
@@ -42,12 +32,14 @@ class Appointment
     private ?string $details;
 
     #[MaxDepth(1)]
-    #[ORM\ManyToOne(targetEntity: User::class ,inversedBy: 'appointments', fetch: 'EXTRA_LAZY')]
+    #[ORM\ManyToOne(targetEntity: User::class, fetch: 'EXTRA_LAZY', inversedBy: 'appointments')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Ignore]
     private ?User $user = null;
 
-    #[ORM\ManyToOne(targetEntity: Room::class, inversedBy: 'appointments', fetch: 'EXTRA_LAZY')]
+    #[ORM\ManyToOne(targetEntity: Room::class, fetch: 'EXTRA_LAZY', inversedBy: 'appointments')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Ignore]
     private ?Room $room = null;
 
     public function getId(): ?int
@@ -63,30 +55,6 @@ class Appointment
     public function setDate(\DateTimeInterface $date): static
     {
         $this->date = $date;
-
-        return $this;
-    }
-
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): static
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    public function getEgn(): ?string
-    {
-        return $this->egn;
-    }
-
-    public function setEgn(string $egn): static
-    {
-        $this->egn = $egn;
 
         return $this;
     }

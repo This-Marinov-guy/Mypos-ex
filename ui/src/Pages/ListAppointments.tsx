@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { observer } from "mobx-react-lite"
-import { useSearchParams } from "react-router-dom";
+import {useParams, useSearchParams} from "react-router-dom";
 import { useHttpClient } from "../hooks/http-hook";
 import AppointmentList from "../Components/Appointment/AppointmentList";
 import Filter from "../Components/UI/Filter";
 import Pagination from "../Components/UI/Pagination";
 import {useAppointment} from "../store/AppointmentStore";
+import {useUser} from "../store/UserStore";
 
 const ListAppointments = observer(() => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -16,16 +17,34 @@ const ListAppointments = observer(() => {
   const [pagesCount, setPagesCount] = useState<number>(1);
 
   const { loading, sendRequest } = useHttpClient();
+
   const {appointments, loadAllAppointments} = useAppointment();
+
+  const {roomId} = useParams();
+
+  const {user} = useUser();
+
   const fetchData = async () => {
-    try {
-      const responseData = await sendRequest(
-        `/appointments?${searchParams.toString()}`
-      );
-      loadAllAppointments(responseData.data);
-      setPagesCount(responseData.pagesCount);
-      setCurrentPage(Number(searchParams.get("page")));
-    } catch (error) {
+    if (roomId && user.roles.includes("ROLE_ADMIN")) {
+      try {
+        const responseData = await sendRequest(
+            `/room/${roomId}/appointments?${searchParams.toString()}`
+        );
+        loadAllAppointments(responseData);
+        setPagesCount(responseData);
+        setCurrentPage(Number(searchParams.get("page")));
+      } catch (error) {
+      }
+    } else {
+      try {
+        const responseData = await sendRequest(
+            `/appointments?${searchParams.toString()}`
+        );
+        loadAllAppointments(responseData.data);
+        setPagesCount(responseData.pagesCount);
+        setCurrentPage(Number(searchParams.get("page")));
+      } catch (error) {
+      }
     }
   };
 

@@ -20,7 +20,7 @@ final class Version20231112201131 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE TABLE appointment (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, date DATETIME NOT NULL, name VARCHAR(255) NOT NULL, egn VARCHAR(255) NOT NULL, details VARCHAR(1000) NOT NULL)');
+        $this->addSql('CREATE TABLE appointment (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, date DATETIME NOT NULL, details VARCHAR(1000) NOT NULL)');
     }
 
     public function down(Schema $schema): void

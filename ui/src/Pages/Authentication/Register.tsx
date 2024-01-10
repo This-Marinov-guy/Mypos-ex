@@ -5,7 +5,6 @@ import {useHttpClient} from "../../hooks/http-hook";
 import {ErrorMessage, Field, Form, Formik} from "formik";
 import {useNotification} from "../../store/NotificationStore";
 import {useNavigate} from "react-router-dom";
-import {useUser} from "../../store/UserStore";
 
 YupPassword(yup)
 
@@ -30,7 +29,6 @@ const Register = () => {
 
     const {addSuccess, clearSuccess} = useNotification()
 
-    const {login} = useUser()
 
     return (
         <div className="dashed-border">
@@ -46,21 +44,10 @@ const Register = () => {
                             values
                         );
                         if (responseData.code == 200) {
-                            const responseLoginData = await sendRequest(
-                                '/user/login',
-                                'POST',
-                                {username: values.email, password: values.password}
-                            );
-                            if (responseLoginData.token) {
-                                login({
-                                    token: responseData.token,
-                                    id: responseData.data.id,
-                                    roles: responseData.data.roles
-                                });
-                                addSuccess(responseData.message, responseData.code);
-                                setTimeout(clearSuccess, 5000);
-                                navigate('/')
-                            }
+                            addSuccess(responseData.message, responseData.code);
+                            setTimeout(clearSuccess, 5000);
+                            navigate('/login')
+
                         }
                     } catch (err) {
                     }

@@ -21,7 +21,7 @@ class AppointmentRepository extends AbstractRepository
     }
     public function applyFilters($filters): object
     {
-        $queryBuilder = $this->createQueryBuilder('a')->orderBy('a.date', 'ASC');
+        $queryBuilder = $this->createQueryBuilder('a')->addSelect('a.id',  'r.id as roomId', 'a.date', 'u.name as name', 'u.egn as egn', 'a.details',)->leftJoin('a.room', 'r')->leftJoin('a.user', 'u')->orderBy('a.date', 'ASC');
 
         if (isset($filters['dateFrom']) && $filters['dateFrom']) {
             $queryBuilder
@@ -37,13 +37,13 @@ class AppointmentRepository extends AbstractRepository
 
         if (isset($filters['name']) && $filters['name']) {
             $queryBuilder
-                ->andWhere('LOWER(a.name) LIKE :name')
+                ->andWhere('LOWER(u.name) LIKE :name')
                 ->setParameter('name', '%' . strtolower($filters['name']) . '%');
         }
 
         if (isset($filters['egn']) && $filters['egn']) {
             $queryBuilder
-                ->andWhere('LOWER(a.egn) LIKE :egn')
+                ->andWhere('LOWER(u.egn) LIKE :egn')
                 ->setParameter('egn', '%' . strtolower($filters['egn']) . '%');
         }
 
@@ -53,6 +53,11 @@ class AppointmentRepository extends AbstractRepository
                 ->setParameter('details', '%' . strtolower($filters['details']) . '%');
         }
 
+        if (isset($filters['room']) && $filters['room']) {
+            $queryBuilder
+                ->andWhere('a.room = :room')
+                ->setParameter('room', $filters['room']);
+        }
         return $queryBuilder;
     }
 

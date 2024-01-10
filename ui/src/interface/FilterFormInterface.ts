@@ -4,4 +4,5 @@ export default interface FilterForm {
     name: string;
     egn: string;
     details: string;
+    room: string;
   }

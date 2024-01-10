@@ -44,7 +44,8 @@ const AppointmentCardExtended = (props: AppointmentData) => {
         >
             <div className="flex flex-col gap-2 items-start justify-center text-lg">
                 {expired && <p className="font-bold">Expired</p>}
-                <p>Date: {formattedDate}</p>
+                <h2 className='font-bold'>Room: {props.roomId}</h2>
+                <h2 className='font-bold'>Date: {formattedDate}</h2>
                 <p>Time: {formattedTime}</p>
                 <p>Name: {props.name}</p>
                 <p>EGN: {props.egn}</p>
