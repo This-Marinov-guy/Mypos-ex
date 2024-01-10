@@ -38,7 +38,7 @@ const ListAppointments = observer(() => {
     } else {
       try {
         const responseData = await sendRequest(
-            `/appointments?${searchParams.toString()}`
+            `/appointments/${user.id}?${searchParams.toString()}`
         );
         loadAllAppointments(responseData.data);
         setPagesCount(responseData.pagesCount);

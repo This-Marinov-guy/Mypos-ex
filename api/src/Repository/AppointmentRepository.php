@@ -4,7 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Appointment;
 use Doctrine\Persistence\ManagerRegistry;
-use App\Repository\AbstractRepository;
+
 /**
  *
  * @method Appointment|null find($id, $lockMode = null, $lockVersion = null)
@@ -19,9 +19,22 @@ class AppointmentRepository extends AbstractRepository
     {
         parent::__construct($registry, Appointment::class);
     }
-    public function applyFilters($filters): object
+
+    public function applyFilters($basicUserName, $filters): object
     {
-        $queryBuilder = $this->createQueryBuilder('a')->addSelect('a.id',  'r.id as roomId', 'a.date', 'u.name as name', 'u.egn as egn', 'a.details',)->leftJoin('a.room', 'r')->leftJoin('a.user', 'u')->orderBy('a.date', 'ASC');
+        $queryBuilder = $this->createQueryBuilder('a')->addSelect('a.id', 'r.id as roomId', 'a.date', 'u.name as name', 'u.egn as egn', 'a.details',)->leftJoin('a.room', 'r')->leftJoin('a.user', 'u')->orderBy('a.date', 'ASC');
+
+        if ($basicUserName) {
+            $queryBuilder
+                ->andWhere('u.name = :userName')
+                ->setParameter('userName', $basicUserName);
+        }
+
+        if (isset($filters['dateFrom']) && $filters['dateFrom']) {
+            $queryBuilder
+                ->andWhere('a.date >= :dateFrom')
+                ->setParameter('dateFrom', $filters['dateFrom']);
+        }
 
         if (isset($filters['dateFrom']) && $filters['dateFrom']) {
             $queryBuilder

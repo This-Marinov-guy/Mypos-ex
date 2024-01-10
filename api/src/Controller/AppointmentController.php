@@ -12,11 +12,11 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class AppointmentController extends AbstractController
 {
-    #[Route('/appointments', name: 'appointments_list', methods: ['GET'])]
-    public function show(AppointmentService $appointmentService, Request $request): JsonResponse
+    #[Route('/appointments/{userid}', name: 'appointments_list', methods: ['GET'])]
+    public function show($userid, AppointmentService $appointmentService, Request $request): JsonResponse
     {
         return $this->json(
-            $appointmentService->filterPaginated($request),
+            $appointmentService->filterPaginated($userid, $request),
         );
     }
 

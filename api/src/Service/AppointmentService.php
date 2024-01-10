@@ -18,7 +18,7 @@ class AppointmentService
     {
     }
 
-    public function filterPaginated(Request $request): array
+    public function filterPaginated($userid, Request $request): array
     {
         $filters = array_combine(
             ['dateFrom', 'dateTo', 'name', 'egn', 'details', 'room'],
@@ -27,7 +27,11 @@ class AppointmentService
 
         $page = $request->query->get('page') ?: 1;
 
-        $queryBuilder = $this->appointmentRepository->applyFilters($filters);
+        $user = $this->userRepository->find($userid);
+//check if user is admin and if not return their name in order to limit the appointments to their own
+        $basicUserName = in_array("ROLE_ADMIN", $user->getRoles()) ? null : $user->getName();
+
+        $queryBuilder = $this->appointmentRepository->applyFilters($basicUserName, $filters);
 
         ['paginator' => $paginator, 'pagesCount' => $pagesCount] = $this->appointmentRepository->paginateQuery($queryBuilder, $page);
 
@@ -50,9 +54,10 @@ class AppointmentService
 
     }
 
-    public function extendAppointment($appointment): array {
+    public function extendAppointment($appointment): array
+    {
         return [
-            'id' =>  $appointment->getId(),
+            'id' => $appointment->getId(),
             'date' => $appointment->getDate(),
             'details' => $appointment->getDetails(),
             'roomId' => $appointment->getRoom()->getId(),
@@ -61,18 +66,6 @@ class AppointmentService
         ];
     }
 
-    public function extendAppointmentList($appointments): array {
-       return array_map(function ($a) {
-            return [
-                'id' =>  $a->getId(),
-                'date' => $a->getDate(),
-                'details' => $a->getDetails(),
-                'roomId' => $a->getRoom()->getId(),
-                'name' => $a->getUser()->getName(),
-                'egn' => $a->getUser()->getEgn()
-            ];
-        }, $appointments->toArray());
-    }
     public function filterName($userid, $appointmentId): array
     {
         $appointments = $this->userRepository->find($userid)->getAppointments()->toArray();
@@ -81,13 +74,27 @@ class AppointmentService
             return $a->getId() !== $appointmentId && $a->getDate() > new DateTime();
         }));
 
-        $extendedFilteredAppointments =  $this->extendAppointmentList($filteredAppointments);
+        $extendedFilteredAppointments = $this->extendAppointmentList($filteredAppointments);
 
         return [
             'message' => 'success',
             'code' => 200,
             'data' => $extendedFilteredAppointments
         ];
+    }
+
+    public function extendAppointmentList($appointments): array
+    {
+        return array_map(function ($a) {
+            return [
+                'id' => $a->getId(),
+                'date' => $a->getDate(),
+                'details' => $a->getDetails(),
+                'roomId' => $a->getRoom()->getId(),
+                'name' => $a->getUser()->getName(),
+                'egn' => $a->getUser()->getEgn()
+            ];
+        }, $appointments->toArray());
     }
 
     public function createAppointment($request): array
@@ -107,10 +114,10 @@ class AppointmentService
 
         $rooms = $this->roomRepository->findAll();
         $LIMIT = 8;
-        $targetRoom = $rooms[0]->getSize() < $LIMIT ? $rooms[0] : null ;
+        $targetRoom = $rooms[0]->getSize() < $LIMIT ? $rooms[0] : null;
 
         for ($x = 0; $x < count($rooms); $x++) {
-            if ( $targetRoom && $rooms[$x]->getSize() < $targetRoom->getSize()) {
+            if ($targetRoom && $rooms[$x]->getSize() < $targetRoom->getSize()) {
                 if ($rooms[$x]->getSize() < $LIMIT) {
                     $targetRoom = $rooms[$x];
                 }
@@ -136,7 +143,7 @@ class AppointmentService
         return [
             'message' => 'Appointment Added!',
             'code' => 200,
-            'data' => ['groups' => 'appointment','user', 'room']
+            'data' => ['groups' => 'appointment', 'user', 'room']
         ];
 
     }
