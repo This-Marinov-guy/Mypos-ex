@@ -83,7 +83,7 @@ class AppointmentService
         }
 
         $rooms = $this->roomRepository->findAll();
-        $LIMIT = 4;
+        $LIMIT = 8;
         $targetRoom = $rooms[0]->getSize() < $LIMIT ? $rooms[0] : null ;
 
         for ($x = 0; $x < count($rooms); $x++) {

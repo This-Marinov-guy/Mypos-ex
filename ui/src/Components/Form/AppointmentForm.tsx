@@ -52,9 +52,9 @@ const AppointmentForm = (props: Props) => {
                     }
                 >
                     {() => (
-                        <Form className="flex flex-col items-center justify-between gap-6 w-full">
-                            <div className="flex flex-col lg:flex-row gap-4 w-1/2">
-                                <div className="input-element w-full lg:w-1/2">
+                        <Form className="flex flex-col items-center justify-center gap-6 w-full">
+                            <div className="flex flex-col w-full lg:w-1/2 gap-4">
+                                <div className="input-element w-full ">
                                     <label>Date</label>
                                     <Field
                                         type="datetime-local"
@@ -64,7 +64,7 @@ const AppointmentForm = (props: Props) => {
                                     <ErrorMessage className="error" name="date" component="div"/>
                                 </div>
 
-                                <div className="input-element w-full lg:w-1/2">
+                                <div className="input-element w-full">
                                     <label>Details</label>
                                     <Field as="textarea" name="details" className="w-full"/>
                                     <ErrorMessage

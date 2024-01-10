@@ -7,17 +7,17 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 #[ORM\Entity(repositoryClass: RoomRepository::class)]
 class Room
 {
-    #[Groups('room')]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups('appointment_detail')]
+    #[MaxDepth(1)]
     #[ORM\OneToMany(mappedBy: 'room', targetEntity: Appointment::class, orphanRemoval: true)]
     private Collection $appointments;
 

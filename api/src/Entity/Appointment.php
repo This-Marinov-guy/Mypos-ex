@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\AppointmentRepository;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\Ignore;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -11,7 +13,6 @@ use Doctrine\ORM\Mapping as ORM;
 
 class Appointment
 {
-    #[Groups('appointments')]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -33,19 +34,19 @@ class Appointment
     #[Assert\Regex(pattern: "/^(?:[0-9]){10}$/", message: "The value must be exactly 10 digits.")]
     private ?string $egn;
 
+    #[MaxDepth(1)]
     #[ORM\Column(length: 1000)]
     #[Assert\NotBlank]
     #[Assert\Length(10)]
 
     private ?string $details;
 
-    #[Groups('appointments')]
-    #[ORM\ManyToOne(inversedBy: 'appointments')]
+    #[MaxDepth(1)]
+    #[ORM\ManyToOne(targetEntity: User::class ,inversedBy: 'appointments', fetch: 'EXTRA_LAZY')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    #[Groups('appointments')]
-    #[ORM\ManyToOne(inversedBy: 'appointments')]
+    #[ORM\ManyToOne(targetEntity: Room::class, inversedBy: 'appointments', fetch: 'EXTRA_LAZY')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Room $room = null;
 
@@ -125,4 +126,5 @@ class Appointment
 
         return $this;
     }
+
 }

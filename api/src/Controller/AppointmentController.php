@@ -6,6 +6,7 @@ use App\Entity\Appointment;
 use App\Entity\User;
 use App\Service\AppointmentService;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,7 +18,7 @@ class AppointmentController extends AbstractController
     public function show(AppointmentService $appointmentService, Request $request): JsonResponse
     {
         return $this->json(
-            $appointmentService->filterPaginated($request)
+            $appointmentService->filterPaginated($request),
         );
     }
 
