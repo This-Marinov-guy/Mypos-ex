@@ -11,15 +11,15 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class RoomController extends AbstractController
 {
-    #[Route('/rooms', name: 'app_rooms')]
+    #[Route('/rooms', name: 'admin_rooms')]
     public function show(RoomRepository $roomRepository): Response
     {
         return $this->json($roomRepository->findAll());
     }
 
-    #[Route('/room/{id}/appointments', name: 'app_room')]
+    #[Route('/rooms/{id}/appointments', name: 'admin_room')]
     public function details(Room $room, AppointmentService $appointmentService): Response
     {
-        return $this->json($appointmentService->extendAppointmentList($room->getAppointments()));
+        return $this->json($appointmentService->extendAppointmentList($room->getAppointments()->toArray()));
     }
 }

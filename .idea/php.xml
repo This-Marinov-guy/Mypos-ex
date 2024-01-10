@@ -93,15 +93,16 @@
       <path value="$PROJECT_DIR$/API/vendor/symfony/error-handler" />
       <path value="$PROJECT_DIR$/API/vendor/symfony/expression-language" />
       <path value="$PROJECT_DIR$/API/vendor/symfony/event-dispatcher-contracts" />
-      <path value="$PROJECT_DIR$/api/vendor/monolog/monolog" />
       <path value="$PROJECT_DIR$/api/vendor/symfony/web-profiler-bundle" />
-      <path value="$PROJECT_DIR$/api/vendor/symfony/monolog-bundle" />
-      <path value="$PROJECT_DIR$/api/vendor/symfony/monolog-bridge" />
-      <path value="$PROJECT_DIR$/api/vendor/symfony/debug-bundle" />
-      <path value="$PROJECT_DIR$/api/vendor/lcobucci/jwt" />
       <path value="$PROJECT_DIR$/api/vendor/lcobucci/clock" />
+      <path value="$PROJECT_DIR$/api/vendor/lcobucci/jwt" />
+      <path value="$PROJECT_DIR$/api/vendor/monolog/monolog" />
       <path value="$PROJECT_DIR$/api/vendor/lexik/jwt-authentication-bundle" />
       <path value="$PROJECT_DIR$/api/vendor/namshi/jose" />
+      <path value="$PROJECT_DIR$/api/vendor/symfony/debug-bundle" />
+      <path value="$PROJECT_DIR$/api/vendor/symfony/apache-pack" />
+      <path value="$PROJECT_DIR$/api/vendor/symfony/monolog-bridge" />
+      <path value="$PROJECT_DIR$/api/vendor/symfony/monolog-bundle" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.1" />

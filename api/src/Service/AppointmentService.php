@@ -50,8 +50,6 @@ class AppointmentService
             'data' => $appointments,
             'pagesCount' => $pagesCount,
         ];
-
-
     }
 
     public function extendAppointment($appointment): array
@@ -66,9 +64,9 @@ class AppointmentService
         ];
     }
 
-    public function filterName($userid, $appointmentId): array
+    public function filterName($userName, $appointmentId): array
     {
-        $appointments = $this->userRepository->find($userid)->getAppointments()->toArray();
+        $appointments = $this->userRepository->findOneBy(['name' => $userName])->getAppointments()->toArray();
 
         $filteredAppointments = array_values(array_filter($appointments, function ($a) use ($appointmentId) {
             return $a->getId() !== $appointmentId && $a->getDate() > new DateTime();
@@ -94,7 +92,7 @@ class AppointmentService
                 'name' => $a->getUser()->getName(),
                 'egn' => $a->getUser()->getEgn()
             ];
-        }, $appointments->toArray());
+        }, $appointments);
     }
 
     public function createAppointment($request): array

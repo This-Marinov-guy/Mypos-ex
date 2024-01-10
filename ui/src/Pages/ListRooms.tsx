@@ -23,7 +23,7 @@ const ListRooms = () => {
 
     return (
         <React.Fragment>
-            {rooms.length > 0 ? <RoomList rooms={rooms!}/> : <p className="text-center">No Rooms Found</p>
+            {rooms ? <RoomList rooms={rooms!}/> : <p className="text-center">No Rooms Found</p>
             }
         </React.Fragment>
     );

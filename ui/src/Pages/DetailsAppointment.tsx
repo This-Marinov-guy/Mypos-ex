@@ -28,13 +28,13 @@ const DetailsAppointment = () => {
 
     const fetchData = async () => {
         try {
-            const responseData = await sendRequest(`/appointments/${appointmentId}`);
+            const responseData = await sendRequest(`/appointment-details/${appointmentId}`);
             if (!responseData) {
                 setAppointmentNotFound(true);
             } else {
                 setAppointment(responseData);
                 const responseUserData = await sendRequest(
-                    `/user-appointments/${user.id}/${appointmentId}`
+                    `/user-appointments/${responseData.name}/${appointmentId}`
                 );
                 setUserAppointments(
                     responseUserData.data

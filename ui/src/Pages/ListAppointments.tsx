@@ -28,7 +28,7 @@ const ListAppointments = observer(() => {
     if (roomId && user.roles.includes("ROLE_ADMIN")) {
       try {
         const responseData = await sendRequest(
-            `/room/${roomId}/appointments?${searchParams.toString()}`
+            `/rooms/${roomId}/appointments?${searchParams.toString()}`
         );
         loadAllAppointments(responseData);
         setPagesCount(responseData);
@@ -66,7 +66,7 @@ const ListAppointments = observer(() => {
     return (
       <React.Fragment>
         <Filter />
-        {appointments.length > 0 ? (
+        {appointments ? (
           <AppointmentList appointments={appointments} />
         ) : (
           <p className="text-center">No Appointments Found</p>
