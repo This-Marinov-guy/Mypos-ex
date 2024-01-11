@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Constants\Roles;
 use App\Repository\UserRepository;
 
 class AuthorizeService
@@ -14,7 +15,7 @@ class AuthorizeService
     {
         $user = $this->userService->getUserFromJWTToken($request);
 
-        if ($request->headers->get('Authorization') && $user->getEmail() === $appointment->getUser()->getEmail() || in_array('ROLE_ADMIN', $user->getRoles())) {
+        if ($request->headers->get('Authorization') && $user->getEmail() === $appointment->getUser()->getEmail() || Roles::ADMIN == $user->getRoles()) {
              return [
                 'access' => true,
                 'message' => 'Access granted',
@@ -33,7 +34,7 @@ class AuthorizeService
     public function authorizeAdmin($request): array
     {
 
-        if ($request->headers->get('Authorization') && in_array('ROLE_ADMIN', $this->userService->getUserFromJWTToken($request)->getRoles())) {
+        if ($request->headers->get('Authorization') && Roles::ADMIN == $this->userService->getUserFromJWTToken($request)->getRoles()) {
             return [
                 'access' => true,
                 'message' => 'Access granted',

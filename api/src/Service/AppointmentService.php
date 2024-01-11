@@ -2,6 +2,8 @@
 
 namespace App\Service;
 
+use App\Constants\Filters;
+use App\Constants\Roles;
 use App\Entity\Appointment;
 use App\Repository\AppointmentRepository;
 use App\Repository\UserRepository;
@@ -18,11 +20,10 @@ class AppointmentService
 
     public function filterPaginated(Request $request, $roomid = null): array
     {
-        $FILTER_PARAMS = ['dateFrom', 'dateTo', 'name', 'egn', 'details', 'room'];
 
         $filters = array_combine(
-            $FILTER_PARAMS,
-            array_map(fn($param) => $request->query->get($param), $FILTER_PARAMS)
+            Filters::APPOINTMENT,
+            array_map(fn($param) => $request->query->get($param), Filters::APPOINTMENT)
         );
 
         if ($roomid) {
@@ -34,7 +35,7 @@ class AppointmentService
         $user = $this->userService->getUserFromJWTToken($request);
 
         //check if user is admin and if not return their name in order to limit the appointments to their own
-        $basicUserName = in_array("ROLE_ADMIN", $user->getRoles()) ? null : $user->getName();
+        $basicUserName = Roles::ADMIN == $user->getRoles() ? null : $user->getName();
 
         $queryBuilder = $this->appointmentRepository->applyFilters($basicUserName, $filters);
 

@@ -2,16 +2,16 @@
 
 namespace App\Entity;
 
+use App\Constants\Regex;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\Ignore;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Ignore;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -26,12 +26,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
-
     private ?string $name;
 
     #[ORM\Column]
     #[Assert\NotBlank]
-    #[Assert\Regex(pattern: "/^(?:[0-9]){10}$/", message: "The value must be exactly 10 digits.")]
+    #[Assert\Regex(pattern: Regex::EGN, message: "The value must be exactly 10 digits.")]
     private ?string $egn;
 
     #[ORM\Column]
@@ -42,7 +41,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     #[Assert\NotBlank]
-    #[Assert\Regex(pattern: "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/", message: "The password must contain minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character")]
+    #[Assert\Regex(pattern: Regex::PASSWORD, message: "The password must contain minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character")]
     private ?string $password = null;
 
     #[MaxDepth(1)]
@@ -103,7 +102,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        return (string)$this->email;
     }
 
     /**

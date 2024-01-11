@@ -2,6 +2,8 @@
 
 namespace App\Service;
 
+use App\Constants\Regex;
+use App\Constants\Roles;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -22,7 +24,7 @@ class UserService
         $authHeader = $request->headers->get('Authorization');
         $authToken = null;
 
-        if (preg_match('/Bearer\s+(.*)$/i', $authHeader, $matches)) {
+        if (preg_match(Regex::Bearer, $authHeader, $matches)) {
             $authToken = $matches[1];
         }
 
@@ -53,8 +55,8 @@ class UserService
                 $password,
             );
 
-            $user->setRoles(array('ROLE_USER'));
-//          $user->setRoles(array('ROLE_USER', 'ROLE_ADMIN'));
+            $user->setRoles(Roles::ADMIN);
+//            $user->setRoles(Roles::USER);
             $user->setPassword($hashedPassword);
 
             $em = $this->doctrine->getManager();
@@ -84,7 +86,7 @@ class UserService
     {
         ['email' => $email, 'newPassword' => $newPassword] = json_decode($request->getContent(), true);
 
-        if (!preg_match("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$", $newPassword)) {
+        if (!preg_match(Regex::PASSWORD, $newPassword)) {
              return [
                 'error' => 'New Password must contain minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character',
                 'code' => 422
