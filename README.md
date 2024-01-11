@@ -51,6 +51,11 @@ Step 3: Generate JWT Token
 generate jwt token - php bin/console lexik:jwt:generate-keypair
 ```
 
+or 
+
+```cli
+generate jwt token - php bin/console lexik:jwt:generate-keypair --overwritecd 
+```
 
 Step 4: Install npm dependencies
 ---------------------------------
@@ -65,7 +70,7 @@ cd ui
 npm install
 ```
 
-Step 5: Start program
+Step 5: Start the program
 ---------------------------------
 Open ui folder from root directory
 
