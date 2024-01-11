@@ -14,14 +14,15 @@ type Props = {
 const schema = yup.object().shape({
     date: yup
         .string()
-        .required("Date and time are required")
-        .test("not-in-past", "Date and time cannot be in the past", (value) =>
-            moment(value, "YYYY-MM-DDTHH:mm").isSameOrAfter(moment(), "minute")
-        ),
+        // .required("Date and time are required")
+        // .test("not-in-past", "Date and time cannot be in the past", (value) =>
+        //     moment(value, "YYYY-MM-DDTHH:mm").isSameOrAfter(moment(), "minute")
+        // )
+    ,
     details: yup
         .string()
-        .min(10, "Please give more details")
-        .required("Details are required"),
+        // .min(10, "Please give more details")
+        // .required("Details are required"),
 });
 
 const AppointmentForm = (props: Props) => {

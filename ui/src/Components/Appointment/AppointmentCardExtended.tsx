@@ -22,7 +22,7 @@ const AppointmentCardExtended = (props: AppointmentData) => {
     const handleDelete = async () => {
         try {
             const responseData = await sendRequest(
-                `/appointment/delete/${props.id}`,
+                `/appointments/delete/${props.id}`,
                 "DELETE",
             );
             if (responseData.code == 200) {

@@ -10,14 +10,19 @@ YupPassword(yup)
 
 const schema = yup.object().shape({
 
-    name: yup.string().required("Name is required"),
+    name: yup.string()
+        // .required("Name is required")
+    ,
     egn: yup
         .string()
-        .required("EGN is required")
-        .test("is-10-digits", "EGN must be exactly 10 digits", (value) =>
-            /^(?:[0-9]){10}$/.test(value)
-        ),
-    email: yup.string().email(),
+        // .required("EGN is required")
+        // .test("is-10-digits", "EGN must be exactly 10 digits", (value) =>
+        //     /^(?:[0-9]){10}$/.test(value)
+        // )
+    ,
+    email: yup.string()
+        // .email()
+    ,
     password: yup.string()
     // .password().required()
 });

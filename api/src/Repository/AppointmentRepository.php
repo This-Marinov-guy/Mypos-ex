@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Appointment;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  *
@@ -15,7 +16,7 @@ use Doctrine\Persistence\ManagerRegistry;
 class AppointmentRepository extends AbstractRepository
 {
 
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private ValidatorInterface $validator,)
     {
         parent::__construct($registry, Appointment::class);
     }
@@ -72,6 +73,13 @@ class AppointmentRepository extends AbstractRepository
                 ->setParameter('room', $filters['room']);
         }
         return $queryBuilder;
+    }
+
+    public function validateAppointment($appointment)
+    {
+        $errors = $this->validator->validate($appointment);
+        return (string)$errors;
+
     }
 
 //    /**

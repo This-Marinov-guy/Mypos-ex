@@ -129,6 +129,16 @@ class AppointmentService
             ];
         }
 
+        $errors = $this->appointmentRepository->validateAppointment($appointment);
+        if (
+            $errors
+        ) {
+            return [
+                'error' => $errors,
+                'code' => 422,
+            ];
+        }
+
         $appointment->setRoom($targetRoom);
         $appointment->setUser($user);
 

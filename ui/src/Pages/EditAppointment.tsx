@@ -46,7 +46,7 @@ const EditAppointment = () => {
     const handleSubmit = async (values: AppointmentData) => {
         try {
             const responseData = await sendRequest(
-                `/appointment/edit/${appointmentId}`,
+                `/appointments/edit/${appointmentId}`,
                 "PUT",
                 values,
             );

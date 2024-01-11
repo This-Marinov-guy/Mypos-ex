@@ -26,8 +26,8 @@ class Appointment
 
     #[MaxDepth(1)]
     #[ORM\Column(length: 1000)]
-    #[Assert\NotBlank]
-    #[Assert\Length(10)]
+    #[Assert\NotBlank(message: 'Required')]
+    #[Assert\Length(min: 10, minMessage: 'Minimum 10 chars')]
 
     private ?string $details;
 
