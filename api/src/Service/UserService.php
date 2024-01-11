@@ -24,6 +24,17 @@ class UserService
             ['password' => $password] = json_decode($request->getContent(), true);
 
             $user = $this->serializer->deserialize($request->getContent(), User::class, 'json');
+
+            $errors = $this->userRepository->validate($user);
+            if (
+                $errors
+            ) {
+                return [
+                    'error' => $errors,
+                    'code' => 422,
+                ];
+            }
+
             $hashedPassword = $this->passwordHasher->hashPassword(
                 $user,
                 $password,
@@ -60,6 +71,14 @@ class UserService
     public function resetPassword($request): array
     {
         ['email' => $email, 'newPassword' => $newPassword] = json_decode($request->getContent(), true);
+
+        if (!preg_match("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$", $newPassword)) {
+             return [
+                'error' => 'New Password must contain minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character',
+                'code' => 422
+            ];
+        }
+
         $user = $this->userRepository->findBy(["email" => $email])[0];
 
         if (!$user) {

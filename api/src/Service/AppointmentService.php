@@ -129,7 +129,7 @@ class AppointmentService
             ];
         }
 
-        $errors = $this->appointmentRepository->validateAppointment($appointment);
+        $errors = $this->appointmentRepository->validate($appointment);
         if (
             $errors
         ) {
@@ -158,6 +158,16 @@ class AppointmentService
 
     public function updateAppointment($appointment, $request): array
     {
+        $errors = $this->appointmentRepository->validate($appointment);
+        if (
+            $errors
+        ) {
+            return [
+                'error' => $errors,
+                'code' => 422,
+            ];
+        }
+
         try {
             $em = $this->doctrine->getManager();
 

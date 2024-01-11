@@ -75,11 +75,18 @@ class AppointmentRepository extends AbstractRepository
         return $queryBuilder;
     }
 
-    public function validateAppointment($appointment)
+    public function validate($appointment)
     {
         $errors = $this->validator->validate($appointment);
-        return (string)$errors;
+        $messages = [];
 
+        if (count($errors) > 0) {
+            foreach ($errors as $violation) {
+                $messages[] = $violation->getMessage();
+            }
+        }
+
+        return implode("\n", $messages);
     }
 
 //    /**

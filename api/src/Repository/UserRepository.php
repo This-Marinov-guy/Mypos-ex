@@ -8,10 +8,11 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @extends ServiceEntityRepository<User>
-* @implements PasswordUpgraderInterface<User>
+ * @implements PasswordUpgraderInterface<User>
  *
  * @method User|null find($id, $lockMode = null, $lockVersion = null)
  * @method User|null findOneBy(array $criteria, array $orderBy = null)
@@ -20,9 +21,24 @@ use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
  */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private ValidatorInterface $validator)
     {
         parent::__construct($registry, User::class);
+    }
+
+    public function validate($appointment): string
+    {
+        $errors = $this->validator->validate($appointment);
+        $message = '';
+
+        if (count($errors) > 0) {
+            foreach ($errors as $violation) {
+                $violation->getMessage();
+                $message .= $violation . "\n";
+            }
+        }
+
+        return $message;
     }
 
     /**
