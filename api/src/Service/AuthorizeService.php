@@ -39,16 +39,18 @@ class AuthorizeService
 
     public function authorizeAdmin($userId, $request): array
     {
-        $authHeader = $request->headers->get('Authorization');
-        $authToken = null;
-
-        if (preg_match('/Bearer\s+(.*)$/i', $authHeader, $matches)) {
-            $authToken = $matches[1];
-        }
-        $decodedJwtToken = $this->jwtManager->decode($this->tokenStorageInterface->getToken());
+//        $authHeader = $request->headers->get('Authorization');
+//        $authToken = null;
+//
+//        if (preg_match('/Bearer\s+(.*)$/i', $authHeader, $matches)) {
+//            $authToken = $matches[1];
+//        }
+//
+//        dd($authHeader);
+//        $decodedJwtToken = $this->jwtManager->decode($this->tokenStorageInterface->getToken());
         $isUserAdmin = in_array('ROLE_ADMIN', $this->userRepository->find($userId)->getRoles());
 
-        if ($decodedJwtToken !== $authToken || !$isUserAdmin) {
+        if (!$isUserAdmin) {
             return [
                 'access' => false,
                 'error' => 'Unauthorized user - only for admins',

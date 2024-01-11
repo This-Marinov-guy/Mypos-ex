@@ -11,9 +11,11 @@ export class NotificationStore {
         message: '',
         code: 500,
     };
+
     constructor() {
         makeAutoObservable(this, {
             success: observable,
+            error: observable,
         })
     }
 

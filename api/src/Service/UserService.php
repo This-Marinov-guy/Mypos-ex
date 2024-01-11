@@ -51,7 +51,6 @@ class UserService
             return [
                 'message' => 'User registered!',
                 'code' => 200,
-                'data' => $user
             ];
         } catch (Exception $e) {
             if ($e->getCode() == 19) {

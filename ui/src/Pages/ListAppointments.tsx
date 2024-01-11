@@ -25,27 +25,16 @@ const ListAppointments = observer(() => {
   const {user} = useUser();
 
   const fetchData = async () => {
-    if (roomId && user.roles.includes("ROLE_ADMIN")) {
       try {
         const responseData = await sendRequest(
-            `/${user.id}/rooms/${roomId}/appointments?${searchParams.toString()}`
-        );
-        loadAllAppointments(responseData);
-        setPagesCount(responseData);
-        setCurrentPage(Number(searchParams.get("page")));
-      } catch (error) {
-      }
-    } else {
-      try {
-        const responseData = await sendRequest(
-            `/appointments/${user.id}?${searchParams.toString()}`
+            roomId && user.roles.includes("ROLE_ADMIN") ? `/${user.id}/rooms/${roomId}/appointments?${searchParams.toString()}` : `/appointments/${user.id}?${searchParams.toString()}`
         );
         loadAllAppointments(responseData.data);
         setPagesCount(responseData.pagesCount);
         setCurrentPage(Number(searchParams.get("page")));
       } catch (error) {
       }
-    }
+
   };
 
   useEffect(() => {

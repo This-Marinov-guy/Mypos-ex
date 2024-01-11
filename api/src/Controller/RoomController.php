@@ -6,7 +6,6 @@ use App\Entity\Room;
 use App\Repository\RoomRepository;
 use App\Service\AppointmentService;
 use App\Service\AuthorizeService;
-use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,13 +17,6 @@ class RoomController extends AbstractController
     public function show($userid, Request $request, RoomRepository $roomRepository, AuthorizeService $authorizeService): Response
     {
 
-        $authHeader = $request->headers->get('Authorization');
-        $authToken = null;
-
-        if (preg_match('/Bearer\s+(.*)$/i', $authHeader, $matches)) {
-            $authToken = $matches[1];
-        }
-        dd($authHeader);
         $requestAdminAccess = $authorizeService->authorizeAdmin($userid, $request);
         if (
             $requestAdminAccess['access']
@@ -32,22 +24,24 @@ class RoomController extends AbstractController
             return $this->json($roomRepository->findAll());
 
         } else {
-            return  $this->json($requestAdminAccess);
+            return $this->json($requestAdminAccess);
         }
 
     }
 
     #[Route('/{userid}/rooms/{roomid}/appointments', name: 'admin_room')]
-    public function details($userid, #[MapEntity(id: 'roomid')]  Room $room,  Request $request, AppointmentService $appointmentService, AuthorizeService $authorizeService): Response
+    public function details($userid, $roomid, Request $request, AppointmentService $appointmentService, AuthorizeService $authorizeService): Response
     {
         $requestAdminAccess = $authorizeService->authorizeAdmin($userid, $request);
 
         if (
             $requestAdminAccess['access']
         ) {
-            return $this->json($appointmentService->extendAppointmentList($room->getAppointments()->toArray()));
+            return $this->json(
+                $appointmentService->filterPaginated($userid, $request, $roomid),
+            );
         } else {
-            return  $this->json($requestAdminAccess);
+            return $this->json($requestAdminAccess);
         }
 
     }

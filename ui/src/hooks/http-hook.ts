@@ -10,7 +10,7 @@ export const useHttpClient = () => {
 
     const {user} = useUser()
 
-    const headers = {Authorization: `Bearer ${user.token}`}
+    const headers = {'Authorization' : `Bearer ${user.token}`}
 
     const sendRequest = async (
         url: string,

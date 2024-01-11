@@ -4,7 +4,6 @@ namespace App\Service;
 
 use App\Entity\Appointment;
 use App\Repository\AppointmentRepository;
-use App\Repository\RoomRepository;
 use App\Repository\UserRepository;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
@@ -14,16 +13,22 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class AppointmentService
 {
-    public function __construct(private AppointmentRepository $appointmentRepository, private RoomRepository $roomRepository, private UserRepository $userRepository, private ManagerRegistry $doctrine, private SerializerInterface $serializer)
+    public function __construct(private AppointmentRepository $appointmentRepository, private RoomService $roomService, private UserRepository $userRepository, private ManagerRegistry $doctrine, private SerializerInterface $serializer)
     {
     }
 
-    public function filterPaginated($userid, Request $request): array
+    public function filterPaginated($userid, Request $request, $roomid = null): array
     {
+        $FILTER_PARAMS = ['dateFrom', 'dateTo', 'name', 'egn', 'details', 'room'];
+
         $filters = array_combine(
-            ['dateFrom', 'dateTo', 'name', 'egn', 'details', 'room'],
-            array_map(fn($param) => $request->query->get($param), ['dateFrom', 'dateTo', 'name', 'egn', 'details', 'room'])
+            $FILTER_PARAMS,
+            array_map(fn($param) => $request->query->get($param), $FILTER_PARAMS)
         );
+
+        if ($roomid) {
+            $filters['room'] = (string)$roomid;
+        }
 
         $page = $request->query->get('page') ?: 1;
 
@@ -64,6 +69,21 @@ class AppointmentService
         ];
     }
 
+    public function extendAppointmentList($appointments): array
+    {
+        return array_map(function ($a) {
+                return [
+                    'id' => $a->getId(),
+                    'date' => $a->getDate(),
+                    'details' => $a->getDetails(),
+                    'roomId' => $a->getRoom()->getId(),
+                    'name' => $a->getUser()->getName(),
+                    'egn' => $a->getUser()->getEgn()
+                ];
+            }, $appointments);
+
+    }
+
     public function filterName($userName, $appointmentId): array
     {
         $appointments = $this->userRepository->findOneBy(['name' => $userName])->getAppointments()->toArray();
@@ -81,20 +101,6 @@ class AppointmentService
         ];
     }
 
-    public function extendAppointmentList($appointments): array
-    {
-        return array_map(function ($a) {
-            return [
-                'id' => $a->getId(),
-                'date' => $a->getDate(),
-                'details' => $a->getDetails(),
-                'roomId' => $a->getRoom()->getId(),
-                'name' => $a->getUser()->getName(),
-                'egn' => $a->getUser()->getEgn()
-            ];
-        }, $appointments);
-    }
-
     public function createAppointment($request): array
     {
         $appointment = $this->serializer->deserialize($request->getContent(), Appointment::class, 'json');
@@ -110,17 +116,7 @@ class AppointmentService
             ];
         }
 
-        $rooms = $this->roomRepository->findAll();
-        $LIMIT = 8;
-        $targetRoom = $rooms[0]->getSize() < $LIMIT ? $rooms[0] : null;
-
-        for ($x = 0; $x < count($rooms); $x++) {
-            if ($targetRoom && $rooms[$x]->getSize() < $targetRoom->getSize()) {
-                if ($rooms[$x]->getSize() < $LIMIT) {
-                    $targetRoom = $rooms[$x];
-                }
-            }
-        }
+       $targetRoom = $this->roomService->availableRoom();
 
         if (!$targetRoom) {
             return [
