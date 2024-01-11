@@ -10,8 +10,6 @@ export const useHttpClient = () => {
 
     const {user} = useUser()
 
-    const headers = {'Authorization' : `Bearer ${user.token}`}
-
     const sendRequest = async (
         url: string,
         method: string = "GET",
@@ -19,12 +17,15 @@ export const useHttpClient = () => {
     ) => {
         setLoading(true);
 
+        if (user.token) {
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + user.token
+        }
+
         try {
             const response = await axios.request({
                 url: process.env.REACT_APP_API_URL + url,
                 method,
                 data,
-                headers,
             });
 
             const responseData = response.data;

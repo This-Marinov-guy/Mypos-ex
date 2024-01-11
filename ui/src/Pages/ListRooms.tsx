@@ -12,8 +12,9 @@ const ListRooms = () => {
     const fetchData = async () => {
             try {
                 const responseData = await sendRequest(
-                    `/${user.id}/rooms`
+                    `/rooms`
                 );
+                console.log(responseData)
               setRooms(responseData)
             } catch (error) {
         }

@@ -13,11 +13,11 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class AppointmentService
 {
-    public function __construct(private AppointmentRepository $appointmentRepository, private RoomService $roomService, private UserRepository $userRepository, private ManagerRegistry $doctrine, private SerializerInterface $serializer)
+    public function __construct(private AppointmentRepository $appointmentRepository, private RoomService $roomService, private UserService $userService, private AuthorizeService $authService ,private UserRepository $userRepository, private ManagerRegistry $doctrine, private SerializerInterface $serializer)
     {
     }
 
-    public function filterPaginated($userid, Request $request, $roomid = null): array
+    public function filterPaginated(Request $request, $roomid = null): array
     {
         $FILTER_PARAMS = ['dateFrom', 'dateTo', 'name', 'egn', 'details', 'room'];
 
@@ -32,8 +32,9 @@ class AppointmentService
 
         $page = $request->query->get('page') ?: 1;
 
-        $user = $this->userRepository->find($userid);
-//check if user is admin and if not return their name in order to limit the appointments to their own
+        $user = $this->userService->getUserFromJWTToken($request);
+
+        //check if user is admin and if not return their name in order to limit the appointments to their own
         $basicUserName = in_array("ROLE_ADMIN", $user->getRoles()) ? null : $user->getName();
 
         $queryBuilder = $this->appointmentRepository->applyFilters($basicUserName, $filters);
@@ -72,15 +73,15 @@ class AppointmentService
     public function extendAppointmentList($appointments): array
     {
         return array_map(function ($a) {
-                return [
-                    'id' => $a->getId(),
-                    'date' => $a->getDate(),
-                    'details' => $a->getDetails(),
-                    'roomId' => $a->getRoom()->getId(),
-                    'name' => $a->getUser()->getName(),
-                    'egn' => $a->getUser()->getEgn()
-                ];
-            }, $appointments);
+            return [
+                'id' => $a->getId(),
+                'date' => $a->getDate(),
+                'details' => $a->getDetails(),
+                'roomId' => $a->getRoom()->getId(),
+                'name' => $a->getUser()->getName(),
+                'egn' => $a->getUser()->getEgn()
+            ];
+        }, $appointments);
 
     }
 
@@ -116,7 +117,7 @@ class AppointmentService
             ];
         }
 
-       $targetRoom = $this->roomService->availableRoom();
+        $targetRoom = $this->roomService->availableRoom();
 
         if (!$targetRoom) {
             return [
@@ -164,31 +165,42 @@ class AppointmentService
             ];
         }
 
-        try {
-            $em = $this->doctrine->getManager();
+        $authorization = $this->authService->authorizeUserAppointmentActions($request, $appointment);
 
-            $this->serializer->deserialize($request->getContent(), Appointment::class, 'json', ['object_to_populate' => $appointment]);
-
-            $em->flush();
-
-            $update = $this->appointmentRepository->find($appointment->getId());
-
+        if (!$authorization['access']) {
             return [
-                'message' => 'Appointment Updated!',
-                'code' => 200,
-                'data' => $update
-            ];
-        } catch (Exception $e) {
-            return [
-                'error' => 'Update Fail',
-                'code' => 500,
+                'error' => $authorization['error'],
+                'code' => $authorization['code'],
             ];
         }
+
+        $em = $this->doctrine->getManager();
+
+        $this->serializer->deserialize($request->getContent(), Appointment::class, 'json', ['object_to_populate' => $appointment]);
+
+        $em->flush();
+
+        $update = $this->appointmentRepository->find($appointment->getId());
+
+        return [
+            'message' => 'Appointment Updated!',
+            'code' => 200,
+            'data' => $update
+        ];
+
     }
 
-    public function deleteAppointment($appointment): array
+    public function deleteAppointment($request, $appointment): array
     {
-        try {
+        $authorization = $this->authService->authorizeUserAppointmentActions($request, $appointment);
+
+        if (!$authorization['access']) {
+            return [
+                'error' => $authorization['error'],
+                'code' => $authorization['code'],
+            ];
+        }
+
             $em = $this->doctrine->getManager();
             $em->remove($appointment);
             $em->flush();
@@ -198,12 +210,7 @@ class AppointmentService
                 'code' => 200,
                 'data' => $appointment->getId()
             ];
-        } catch (Exception $e) {
-            return [
-                'error' => 'Delete Fail',
-                'code' => 500,
-            ];
-        }
+
     }
 
 }

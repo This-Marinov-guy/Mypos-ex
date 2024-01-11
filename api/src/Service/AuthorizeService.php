@@ -3,64 +3,47 @@
 namespace App\Service;
 
 use App\Repository\UserRepository;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class AuthorizeService
 {
-    public function __construct(private UserRepository $userRepository, private TokenStorageInterface $tokenStorageInterface, private JWTTokenManagerInterface $jwtManager)
+    public function __construct(private UserRepository $userRepository, private UserService $userService)
     {
     }
 
-    public function authorizeUser($userId, $permissionId, $request): array
+    public function authorizeUserAppointmentActions($request, $appointment): array
     {
-        $authHeader = $request->headers->get('Authorization');
-        $authToken = null;
+        $user = $this->userService->getUserFromJWTToken($request);
 
-        if (preg_match('/Bearer\s+(.*)$/i', $authHeader, $matches)) {
-            $authToken = $matches[1];
-        }        $decodedJwtToken = $this->jwtManager->decode($this->tokenStorageInterface->getToken());
-        $isUserAdmin = in_array('ROLE_ADMIN', $this->userRepository->find($userId)->getRoles());
-
-        if ($decodedJwtToken !== $authToken || ($userId !== $permissionId || !$isUserAdmin)) {
+        if ($request->headers->get('Authorization') && $user->getEmail() === $appointment->getUser()->getEmail() || in_array('ROLE_ADMIN', $user->getRoles())) {
+             return [
+                'access' => true,
+                'message' => 'Access granted',
+                'code' => 200,
+            ];
+        } else {
             return [
                 'access' => false,
                 'error' => 'Unauthorized user',
                 'code' => 401
             ];
-        } else {
+        }
+
+    }
+
+    public function authorizeAdmin($request): array
+    {
+
+        if ($request->headers->get('Authorization') && in_array('ROLE_ADMIN', $this->userService->getUserFromJWTToken($request)->getRoles())) {
             return [
                 'access' => true,
                 'message' => 'Access granted',
-                'code' => 200
+                'code' => 200,
             ];
-        }
-    }
-
-    public function authorizeAdmin($userId, $request): array
-    {
-//        $authHeader = $request->headers->get('Authorization');
-//        $authToken = null;
-//
-//        if (preg_match('/Bearer\s+(.*)$/i', $authHeader, $matches)) {
-//            $authToken = $matches[1];
-//        }
-//
-//        dd($authHeader);
-//        $decodedJwtToken = $this->jwtManager->decode($this->tokenStorageInterface->getToken());
-        $isUserAdmin = in_array('ROLE_ADMIN', $this->userRepository->find($userId)->getRoles());
-
-        if (!$isUserAdmin) {
+        } else {
             return [
                 'access' => false,
                 'error' => 'Unauthorized user - only for admins',
                 'code' => 401
-            ];
-        } else {
-            return [
-                'access' => true,
-                'message' => 'Access granted',
-                'code' => 200
             ];
         }
     }

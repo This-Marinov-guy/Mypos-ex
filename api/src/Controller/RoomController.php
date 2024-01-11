@@ -13,11 +13,10 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class RoomController extends AbstractController
 {
-    #[Route('/{userid}/rooms', name: 'admin_rooms')]
-    public function show($userid, Request $request, RoomRepository $roomRepository, AuthorizeService $authorizeService): Response
+    #[Route('/rooms', name: 'api_admin_rooms')]
+    public function show(Request $request, RoomRepository $roomRepository, AuthorizeService $authorizeService): Response
     {
-
-        $requestAdminAccess = $authorizeService->authorizeAdmin($userid, $request);
+        $requestAdminAccess = $authorizeService->authorizeAdmin($request);
         if (
             $requestAdminAccess['access']
         ) {
@@ -29,16 +28,16 @@ class RoomController extends AbstractController
 
     }
 
-    #[Route('/{userid}/rooms/{roomid}/appointments', name: 'admin_room')]
-    public function details($userid, $roomid, Request $request, AppointmentService $appointmentService, AuthorizeService $authorizeService): Response
+    #[Route('/rooms/{roomid}/appointments', name: 'api_admin_room')]
+    public function details($roomid, Request $request, AppointmentService $appointmentService, AuthorizeService $authorizeService): Response
     {
-        $requestAdminAccess = $authorizeService->authorizeAdmin($userid, $request);
+        $requestAdminAccess = $authorizeService->authorizeAdmin($request);
 
         if (
             $requestAdminAccess['access']
         ) {
             return $this->json(
-                $appointmentService->filterPaginated($userid, $request, $roomid),
+                $appointmentService->filterPaginated($request, $roomid),
             );
         } else {
             return $this->json($requestAdminAccess);

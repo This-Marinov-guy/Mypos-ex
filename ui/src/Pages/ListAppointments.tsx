@@ -27,7 +27,7 @@ const ListAppointments = observer(() => {
   const fetchData = async () => {
       try {
         const responseData = await sendRequest(
-            roomId && user.roles.includes("ROLE_ADMIN") ? `/${user.id}/rooms/${roomId}/appointments?${searchParams.toString()}` : `/appointments/${user.id}?${searchParams.toString()}`
+            roomId && user.roles.includes("ROLE_ADMIN") ? `/rooms/${roomId}/appointments?${searchParams.toString()}` : `/appointments?${searchParams.toString()}`
         );
         loadAllAppointments(responseData.data);
         setPagesCount(responseData.pagesCount);

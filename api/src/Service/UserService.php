@@ -18,6 +18,19 @@ class UserService
     {
     }
 
+    public function getUserFromJWTToken($request): User {
+        $authHeader = $request->headers->get('Authorization');
+        $authToken = null;
+
+        if (preg_match('/Bearer\s+(.*)$/i', $authHeader, $matches)) {
+            $authToken = $matches[1];
+        }
+
+        $decodedToken = json_decode(base64_decode(str_replace('_', '/', str_replace('-','+',explode('.', $authToken)[1]))), true);
+
+        return $this->userRepository->findOneBy(['email' => $decodedToken['username']]);
+    }
+
     public function createUser($request): array
     {
         try {
@@ -40,8 +53,8 @@ class UserService
                 $password,
             );
 
-//            $user->setRoles(array('ROLE_USER'));
-            $user->setRoles(array('ROLE_USER', 'ROLE_ADMIN'));
+            $user->setRoles(array('ROLE_USER'));
+//          $user->setRoles(array('ROLE_USER', 'ROLE_ADMIN'));
             $user->setPassword($hashedPassword);
 
             $em = $this->doctrine->getManager();

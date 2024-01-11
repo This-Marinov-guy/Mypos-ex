@@ -13,13 +13,13 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 class UserController extends AbstractController
 {
-    #[Route('/user/register', name: 'user_register')]
+    #[Route('/user/register', name: 'api_user_register')]
     public function register(Request $request, UserService $userService): Response
     {
         return $this->json($userService->createUser($request));
     }
 
-    #[Route('/user/login', name: 'user_login')]
+    #[Route('/user/login', name: 'api_user_login')]
     public function login(#[CurrentUser] ?User $user): void
     {
     }
