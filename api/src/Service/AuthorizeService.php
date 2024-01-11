@@ -14,11 +14,15 @@ class AuthorizeService
 
     public function authorizeUser($userId, $permissionId, $request): array
     {
-        $headerToken = $request->headers->get('Authorization');
-        $decodedJwtToken = $this->jwtManager->decode($this->tokenStorageInterface->getToken());
+        $authHeader = $request->headers->get('Authorization');
+        $authToken = null;
+
+        if (preg_match('/Bearer\s+(.*)$/i', $authHeader, $matches)) {
+            $authToken = $matches[1];
+        }        $decodedJwtToken = $this->jwtManager->decode($this->tokenStorageInterface->getToken());
         $isUserAdmin = in_array('ROLE_ADMIN', $this->userRepository->find($userId)->getRoles());
 
-        if ($decodedJwtToken !== $headerToken || ($userId !== $permissionId || !$isUserAdmin)) {
+        if ($decodedJwtToken !== $authToken || ($userId !== $permissionId || !$isUserAdmin)) {
             return [
                 'access' => false,
                 'error' => 'Unauthorized user',
@@ -35,7 +39,12 @@ class AuthorizeService
 
     public function authorizeAdmin($userId, $request): array
     {
+        $authHeader = $request->headers->get('Authorization');
+        $authToken = null;
 
+        if (preg_match('/Bearer\s+(.*)$/i', $authHeader, $matches)) {
+            $authToken = $matches[1];
+        }
         $decodedJwtToken = $this->jwtManager->decode($this->tokenStorageInterface->getToken());
         $isUserAdmin = in_array('ROLE_ADMIN', $this->userRepository->find($userId)->getRoles());
 

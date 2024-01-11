@@ -40,8 +40,7 @@ class RoomController extends AbstractController
     #[Route('/{userid}/rooms/{roomid}/appointments', name: 'admin_room')]
     public function details($userid, #[MapEntity(id: 'roomid')]  Room $room,  Request $request, AppointmentService $appointmentService, AuthorizeService $authorizeService): Response
     {
-
-        $requestAdminAccess = $authorizeService->authorizeAdmin($userid);
+        $requestAdminAccess = $authorizeService->authorizeAdmin($userid, $request);
 
         if (
             $requestAdminAccess['access']
