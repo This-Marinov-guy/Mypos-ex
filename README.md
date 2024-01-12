@@ -95,3 +95,18 @@ OR if you do not have symfony CLI
 php bin/console server:run
 ```
 
+Configuration 
+---------------------------------
+To Create an Admin run
+
+```cli
+php bin/console create-admin
+```
+
+Admin credentials 
+---------------------------------
+
+email: admin@test.com
+
+password: Admin123!
+

@@ -22,10 +22,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Assert\NotBlank(message: 'Required')]
+    #[Assert\Email(message: 'Not a valid email.')]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(message: 'Required')]
     private ?string $name;
 
     #[ORM\Column]
@@ -40,7 +42,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(message: 'Required')]
     #[Assert\Regex(pattern: Regex::PASSWORD, message: "The password must contain minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character")]
     private ?string $password = null;
 
