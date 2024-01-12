@@ -72,35 +72,13 @@ class AppointmentService
 
     public function filterName($userName, $appointmentId): array
     {
-        $appointments = $this->userRepository->findOneBy(['name' => $userName])->getAppointments()->toArray();
-
-        $filteredAppointments = array_values(array_filter($appointments, function ($a) use ($appointmentId) {
-            return $a->getId() !== $appointmentId && $a->getDate() > new DateTime();
-        }));
-
-        $extendedFilteredAppointments = $this->extendAppointmentList($filteredAppointments);
-
         return [
             'message' => 'success',
             'code' => 200,
-            'data' => $extendedFilteredAppointments
+            'data' => $this->appointmentRepository->nameFilterQuery($userName, $appointmentId)
         ];
     }
 
-    public function extendAppointmentList($appointments): array
-    {
-        return array_map(function ($a) {
-            return [
-                'id' => $a->getId(),
-                'date' => $a->getDate(),
-                'details' => $a->getDetails(),
-                'roomId' => $a->getRoom()->getId(),
-                'name' => $a->getUser()->getName(),
-                'egn' => $a->getUser()->getEgn()
-            ];
-        }, $appointments);
-
-    }
 
     public function createAppointment($request): array
     {

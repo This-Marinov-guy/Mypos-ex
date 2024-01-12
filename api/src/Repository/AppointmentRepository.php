@@ -75,6 +75,18 @@ class AppointmentRepository extends AbstractRepository
         return $queryBuilder;
     }
 
+    public function nameFilterQuery($userName, $appointmentId): object
+    {
+        return $this->createQueryBuilder('a')->addSelect('a.id', 'r.id as roomId', 'a.date', 'u.name as name', 'u.egn as egn', 'a.details',)->leftJoin('a.room', 'r')->leftJoin('a.user', 'u')->orderBy('a.date', 'ASC')
+            ->andWhere('LOWER(u.name) LIKE :name')
+            ->setParameter('name', $userName)
+            ->andWhere('a.id != :selfId')
+            ->setParameter('selfId', $appointmentId)
+            ->getQuery()
+            ->execute();
+
+    }
+
     public function validate($appointment)
     {
         $errors = $this->validator->validate($appointment);
