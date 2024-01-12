@@ -24,7 +24,7 @@ class AuthorizeService
         } else {
             return [
                 'access' => false,
-                'error' => 'Unauthorized user',
+                'message' => 'Unauthorized user',
                 'code' => 401
             ];
         }
@@ -43,7 +43,7 @@ class AuthorizeService
         } else {
             return [
                 'access' => false,
-                'error' => 'Unauthorized user - only for admins',
+                'message' => 'Unauthorized user - only for admins',
                 'code' => 401
             ];
         }

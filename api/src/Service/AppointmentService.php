@@ -7,7 +7,6 @@ use App\Constants\Roles;
 use App\Entity\Appointment;
 use App\Repository\AppointmentRepository;
 use App\Repository\UserRepository;
-use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -45,7 +44,7 @@ class AppointmentService
 
         if (!$appointments) {
             return [
-                'error' => 'Failed to fetch',
+                'message' => 'Failed to fetch',
                 'code' => 500,
             ];
         }
@@ -72,10 +71,12 @@ class AppointmentService
 
     public function filterName($userName, $appointmentId): array
     {
+        $appointments = $this->appointmentRepository->nameFilterQuery($userName, $appointmentId)->execute();
+
         return [
             'message' => 'success',
             'code' => 200,
-            'data' => $this->appointmentRepository->nameFilterQuery($userName, $appointmentId)
+            'data' => $appointments
         ];
     }
 
@@ -84,13 +85,11 @@ class AppointmentService
     {
         $appointment = $this->serializer->deserialize($request->getContent(), Appointment::class, 'json');
 
-        ['userId' => $userId] = json_decode($request->getContent(), true);
-
-        $user = $this->userRepository->find($userId);
+        $user = $this->userService->getUserFromJWTToken($request);
 
         if (!$appointment) {
             return [
-                'error' => 'Failed to add',
+                'message' => 'Failed to add',
                 'code' => 500,
             ];
         }
@@ -99,7 +98,7 @@ class AppointmentService
 
         if (!$targetRoom) {
             return [
-                'error' => 'All rooms are full',
+                'message' => 'All rooms are full',
                 'code' => 500,
             ];
         }
@@ -109,7 +108,7 @@ class AppointmentService
             $errors
         ) {
             return [
-                'error' => $errors,
+                'message' => $errors,
                 'code' => 422,
             ];
         }
@@ -138,7 +137,7 @@ class AppointmentService
             $errors
         ) {
             return [
-                'error' => $errors,
+                'message' => $errors,
                 'code' => 422,
             ];
         }
@@ -147,7 +146,7 @@ class AppointmentService
 
         if (!$authorization['access']) {
             return [
-                'error' => $authorization['error'],
+                'message' => $authorization['error'],
                 'code' => $authorization['code'],
             ];
         }
@@ -174,7 +173,7 @@ class AppointmentService
 
         if (!$authorization['access']) {
             return [
-                'error' => $authorization['error'],
+                'message' => $authorization['error'],
                 'code' => $authorization['code'],
             ];
         }

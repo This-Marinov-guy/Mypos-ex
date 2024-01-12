@@ -1,10 +1,9 @@
 import React, {useState} from "react";
 import {useHttpClient} from "../../hooks/http-hook";
 import {Link, useNavigate} from "react-router-dom";
-import {useNotification} from "../../store/NotificationStore";
-import {useUser} from "../../store/UserStore";
+import {inject, observer} from 'mobx-react';
 
-const Login = () => {
+const Login = inject('rootStore')(observer(({rootStore}: any) => {
     const [loginFormValues, setLoginFormValues] = useState({
         username: "",
         password: "",
@@ -20,25 +19,26 @@ const Login = () => {
 
     const navigate = useNavigate()
 
-    const {addSuccess, clearSuccess} = useNotification()
-    const {login} = useUser();
+    const {userStore, notificationStore} = rootStore
+
     const handleSubmit = async (event: any) => {
         event.preventDefault()
         try {
             const responseData = await sendRequest(
                 '/user/login',
                 'POST',
-                loginFormValues
+                loginFormValues,
             );
             if (responseData.token) {
-                login({
+                userStore.login({
                     token: responseData.token,
                     id: responseData.data.id,
                     roles: responseData.data.roles
                 });
-                addSuccess(responseData.message, responseData.code);
-                setTimeout(clearSuccess, 5000);
+                notificationStore.addSuccess(responseData.message, responseData.code);
                 navigate('/')
+            } else {
+                notificationStore.addError(responseData.message, responseData.code);
             }
         } catch (err) {
         }
@@ -76,5 +76,5 @@ const Login = () => {
             </form>
         </div>
     );
-};
+}));
 export default Login;

@@ -1,40 +1,40 @@
-import React, {createContext, useContext, useState} from 'react';
-import {action, makeAutoObservable, observable} from "mobx"
+import {action, computed, makeAutoObservable, observable} from "mobx"
 import User from "../interface/UserInterface";
 
-export class UserStore {
-    user: User = {
-        token: '',
-        id: 0,
-        roles: [],
+export default class UserStore {
+    rootStore;
+    @observable token: string = '';
+    @observable id: number = 0;
+    @observable roles: string[] = [];
+
+    constructor(root: any) {
+        makeAutoObservable(this)
+        this.rootStore = root
     }
-    login = action((user: User) => {
-        this.user = user
+
+    @computed get isAdmin() {
+        return this.roles.includes('ROLE_ADMIN')
+    }
+
+    @computed get authToken() {
+        return this.token || null
+    }
+
+    @action login(user: User) {
+        this.token = user.token;
+        this.id = user.id;
+        this.roles = user.roles;
+
         localStorage.setItem(
             "user", JSON.stringify(user)
         )
-    })
-    logout = action(() => {
-        this.user = {
-            token: '',
-            id: 0,
-            roles: [],
-        }
-        localStorage.removeItem("user");
-    })
+    }
 
-    constructor() {
-        makeAutoObservable(this, {
-            user: observable,
-        })
+    @action logout() {
+        this.token = '';
+        this.id = 0;
+        this.roles = [];
+
+        localStorage.removeItem("user");
     }
 }
-
-export const UserContext = createContext<UserStore>(null!);
-
-export const UserProvider = ({children}: { children: React.ReactNode }) => {
-    const [store] = useState(new UserStore());
-    return <UserContext.Provider value={store}>{children}</UserContext.Provider>
-}
-
-export const useUser = () => useContext(UserContext);

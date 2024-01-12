@@ -1,11 +1,17 @@
 import React, {Fragment} from "react";
-import {Link} from "react-router-dom";
-import {useUser} from "../../store/UserStore";
-import {observer} from "mobx-react-lite";
+import {Link, useNavigate} from "react-router-dom";
+import {inject, observer} from "mobx-react";
 
-const NavBar = observer(() => {
+const NavBar = inject('rootStore')(observer(({rootStore}: any) => {
 
-    const {user, logout} = useUser();
+    const {userStore} = rootStore;
+
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        userStore.logout()
+        navigate('/')
+    }
 
     return (
         <nav
@@ -13,10 +19,10 @@ const NavBar = observer(() => {
             <Link to='/' className="text-xl text-white font-bold">Appointer App</Link>
             <div className="flex gap-6">
 
-                {user.token ? <Fragment> <Link to="/" className="nav-link">List</Link>
+                {userStore.authToken ? <Fragment> <Link to="/" className="nav-link">List</Link>
                     <Link to="/appointment/add" className="nav-link">Add</Link>
                     <p>|</p>
-                    <button onClick={logout} className="btn-out">Log out</button>
+                    <button onClick={handleLogout} className="btn-out">Log out</button>
                 </Fragment> : <Fragment>
                     <Link to="/profile/register" className="btn-auth">Register</Link>
                     <Link to="/profile/log-in" className="btn-auth">Log in</Link>
@@ -25,6 +31,6 @@ const NavBar = observer(() => {
             </div>
         </nav>
     );
-});
+}));
 
 export default NavBar;

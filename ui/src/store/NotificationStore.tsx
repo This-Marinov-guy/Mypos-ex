@@ -1,46 +1,51 @@
-import React, {createContext, useContext, useState} from 'react';
-import {action, makeAutoObservable, observable} from "mobx"
+import {action, computed, makeAutoObservable, observable, runInAction} from "mobx"
 
-export class NotificationStore {
-    success: { message: string, code: number } = {
+export default class NotificationStore {
+    rootStore;
+    @observable success: { message: string, code: number } = {
         message: '',
         code: 200,
     };
 
-    error: { message: string, code: number } = {
+    @observable error: { message: string, code: number } = {
         message: '',
         code: 500,
     };
-    addSuccess = action((message: string, code: number) => {
-        this.success.message = message
-        this.success.code = code
-    })
-    clearSuccess = action(() => {
-        this.success.message = ''
-        this.success.code = 0
-    })
-    addError = action((message: string, code: number) => {
+
+    constructor(root: any) {
+        makeAutoObservable(this)
+        this.rootStore = root
+    }
+
+    @computed get hasSuccess() {
+        return !!this.success.message;
+    }
+
+    @computed get hasError() {
+        return !!this.error.message;
+    }
+
+    @action addSuccess(message: string, code: number) {
+        runInAction(() => {
+            this.success.message = message
+            this.success.code = code
+
+            setTimeout(() => {
+                this.success.message = ''
+                this.success.code = 0
+            }, 6000)
+        })
+
+    }
+
+    @action addError(message: string, code: number) {
         this.error.message = message
         this.error.code = code
-    })
-    clearError = action(() => {
-        this.error.message = ''
-        this.error.code = 0
-    })
 
-    constructor() {
-        makeAutoObservable(this, {
-            success: observable,
-            error: observable,
-        })
+        setTimeout(() => {
+            this.error.message = ''
+            this.error.code = 0
+        }, 6000)
     }
 }
 
-export const NotificationContext = createContext<NotificationStore>(null!);
-
-export const NotificationProvider = ({children}: { children: React.ReactNode }) => {
-    const [store] = useState(new NotificationStore());
-    return <NotificationContext.Provider value={store}>{children}</NotificationContext.Provider>
-}
-
-export const useNotification = () => useContext(NotificationContext);

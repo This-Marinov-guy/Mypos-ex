@@ -4,7 +4,6 @@ import {useHttpClient} from "../hooks/http-hook";
 import AppointmentCardExtended from "../Components/Appointment/AppointmentCardExtended";
 import AppointmentList from "../Components/Appointment/AppointmentList";
 import AppointmentData from "../interface/AppointmentInterface";
-import {useUser} from "../store/UserStore";
 
 const DetailsAppointment = () => {
     const [appointment, setAppointment] = useState<AppointmentData>({
@@ -20,8 +19,6 @@ const DetailsAppointment = () => {
     const {appointmentId} = useParams();
 
     const {loading, sendRequest} = useHttpClient();
-
-    const {user} = useUser()
 
     const [appointmentNotFound, setAppointmentNotFound] =
         useState<boolean>(false);

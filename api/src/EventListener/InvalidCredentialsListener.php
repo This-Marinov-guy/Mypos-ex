@@ -10,7 +10,7 @@ class InvalidCredentialsListener
     public function index(AuthenticationFailureEvent $event): void
     {
         $response = new JsonResponse([
-            'error' => 'Invalid Credentials!',
+            'message' => 'Invalid Credentials!',
             'code' => 401
         ]);
 

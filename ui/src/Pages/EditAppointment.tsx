@@ -1,14 +1,13 @@
 import React, {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 import {useHttpClient} from "../hooks/http-hook";
+import {inject, observer} from 'mobx-react';
 import AppointmentForm from "../Components/Form/AppointmentForm";
 import AppointmentData from "../interface/AppointmentInterface";
-import {useAppointment} from "../store/AppointmentStore";
-import {useNotification} from "../store/NotificationStore";
 import AppointmentFormInterface from "../interface/AppointmentFormInterface";
 
 
-const EditAppointment = () => {
+const EditAppointment = inject('rootStore')(observer(({rootStore}: any) => {
     const [initialValues, setInitialValues] = useState<AppointmentFormInterface>({
         id: 0,
         date: "",
@@ -18,9 +17,8 @@ const EditAppointment = () => {
     const [appointmentNotFound, setAppointmentNotFound] =
         useState<boolean>(false);
 
-    const {editAppointment} = useAppointment()
+    const {userStore, appointmentStore, notificationStore} = rootStore
 
-    const {addSuccess, clearSuccess} = useNotification()
 
     const {appointmentId} = useParams();
 
@@ -49,11 +47,13 @@ const EditAppointment = () => {
                 `/appointments/edit/${appointmentId}`,
                 "PUT",
                 values,
+                userStore.authToken
             );
             if (responseData.code == 200) {
-                editAppointment(Number(appointmentId), responseData.data)
-                addSuccess(responseData.message, responseData.code);
-                setTimeout(clearSuccess, 5000);
+                appointmentStore.editAppointment(Number(appointmentId), responseData.data)
+                notificationStore.addSuccess(responseData.message, responseData.code);
+            } else {
+                notificationStore.addError(responseData.message, responseData.code);
             }
         } catch (err) {
         }
@@ -70,6 +70,6 @@ const EditAppointment = () => {
             />
         );
     }
-};
+}));
 
 export default EditAppointment;

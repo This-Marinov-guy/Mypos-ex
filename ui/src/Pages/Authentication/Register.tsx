@@ -3,7 +3,7 @@ import * as yup from "yup";
 import YupPassword from 'yup-password'
 import {useHttpClient} from "../../hooks/http-hook";
 import {ErrorMessage, Field, Form, Formik} from "formik";
-import {useNotification} from "../../store/NotificationStore";
+import {inject, observer} from 'mobx-react';
 import {useNavigate} from "react-router-dom";
 
 YupPassword(yup)
@@ -27,12 +27,12 @@ const schema = yup.object().shape({
     // .password().required()
 });
 
-const Register = () => {
+const Register = inject('rootStore')(observer(({rootStore}: any) => {
     const {loading, sendRequest} = useHttpClient();
 
     const navigate = useNavigate()
 
-    const {addSuccess, clearSuccess} = useNotification()
+    const {notificationStore} = rootStore
 
 
     return (
@@ -49,10 +49,10 @@ const Register = () => {
                             values
                         );
                         if (responseData.code == 200) {
-                            addSuccess(responseData.message, responseData.code);
-                            setTimeout(clearSuccess, 5000);
+                            notificationStore.addSuccess(responseData.message, responseData.code);
                             navigate('/login')
-
+                        } else {
+                            notificationStore.addError(responseData.message, responseData.code);
                         }
                     } catch (err) {
                     }
@@ -121,5 +121,5 @@ const Register = () => {
             </Formik>
         </div>
     );
-};
+}));
 export default Register;

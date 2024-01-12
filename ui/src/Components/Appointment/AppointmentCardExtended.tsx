@@ -3,10 +3,13 @@ import {Link, useNavigate} from "react-router-dom";
 import {useHttpClient} from "../../hooks/http-hook";
 import moment from "moment";
 import AppointmentData from "../../interface/AppointmentInterface";
-import {useAppointment} from "../../store/AppointmentStore";
-import {useNotification} from "../../store/NotificationStore";
+import {inject} from 'mobx-react';
 
-const AppointmentCardExtended = (props: AppointmentData) => {
+interface Props extends AppointmentData {
+    rootStore?: any
+}
+
+const AppointmentCardExtended = inject('rootStore')((props: Props) => {
     const formattedDate = moment(props.date).format("DD-MM-yyyy");
     const formattedTime = moment(props.date).format("HH:mm");
 
@@ -14,9 +17,7 @@ const AppointmentCardExtended = (props: AppointmentData) => {
 
     const {sendRequest} = useHttpClient();
 
-    const {deleteAppointment} = useAppointment();
-
-    const {addSuccess, clearSuccess} = useNotification();
+    const {userStore, appointmentStore, notificationStore} = props.rootStore;
 
     const navigate = useNavigate()
     const handleDelete = async () => {
@@ -24,12 +25,15 @@ const AppointmentCardExtended = (props: AppointmentData) => {
             const responseData = await sendRequest(
                 `/appointments/delete/${props.id}`,
                 "DELETE",
+                null,
+                userStore.authToken
             );
             if (responseData.code == 200) {
-                deleteAppointment(responseData.data)
-                addSuccess(responseData.message, responseData.code);
-                setTimeout(clearSuccess, 5000);
+                appointmentStore.deleteAppointment(responseData.data)
+                notificationStore.addSuccess(responseData.message, responseData.code);
                 navigate('/');
+            } else {
+                notificationStore.addError(responseData.message, responseData.code);
             }
         } catch (err) {
         }
@@ -61,6 +65,6 @@ const AppointmentCardExtended = (props: AppointmentData) => {
             </div>
         </div>
     );
-};
+});
 
 export default AppointmentCardExtended;

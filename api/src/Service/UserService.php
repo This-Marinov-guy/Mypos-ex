@@ -45,7 +45,7 @@ class UserService
                 $errors
             ) {
                 return [
-                    'error' => $errors,
+                    'message' => $errors,
                     'code' => 422,
                 ];
             }
@@ -70,12 +70,12 @@ class UserService
         } catch (Exception $e) {
             if ($e->getCode() == 19) {
                 return [
-                    'error' => 'User already exists',
+                    'message' => 'User already exists',
                     'code' => $e->getCode()
                 ];
             } else {
                 return [
-                    'error' => 'Server error',
+                    'message' => 'Server error',
                     'code' => $e->getCode()
                 ];
             }
@@ -88,7 +88,7 @@ class UserService
 
         if (!preg_match(Regex::PASSWORD, $newPassword)) {
             return [
-                'error' => 'New Password must contain minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character',
+                'message' => 'New Password must contain minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character',
                 'code' => 422
             ];
         }
@@ -97,7 +97,7 @@ class UserService
 
         if (!$user) {
             return [
-                'error' => 'No such user',
+                'message' => 'No such user',
                 'code' => 404
             ];
         }

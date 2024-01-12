@@ -82,8 +82,7 @@ class AppointmentRepository extends AbstractRepository
             ->setParameter('name', $userName)
             ->andWhere('a.id != :selfId')
             ->setParameter('selfId', $appointmentId)
-            ->getQuery()
-            ->execute();
+            ->getQuery();
 
     }
 

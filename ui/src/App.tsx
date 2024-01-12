@@ -1,8 +1,7 @@
 import React, {Fragment, useEffect} from "react";
-import {observer} from "mobx-react-lite"
+import {inject, observer} from 'mobx-react';
 import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
-import {useNotification} from "./store/NotificationStore";
-import {AppointmentProvider} from "./store/AppointmentStore";
+
 
 import "./App.css";
 
@@ -16,50 +15,48 @@ import Register from "./Pages/Authentication/Register";
 import Login from "./Pages/Authentication/Login";
 import ResetPassword from "./Pages/Authentication/ResetPassword";
 import Error from "./Components/UI/Error";
-import {useUser} from "./store/UserStore";
 import ListRooms from "./Pages/ListRooms";
 
-const App = observer(() => {
-    const {success, error} = useNotification();
+const App = inject('rootStore')(observer(({rootStore}: any) => {
 
-    const {user, login} = useUser();
+    const {userStore, notificationStore} = rootStore
 
     useEffect(() => {
         const storedUser = JSON.parse(localStorage.getItem("user")!)
         if (storedUser) {
-            login(storedUser)
+            userStore.login(storedUser)
         }
     }, []);
 
     return (
         <Router basename={"/"}>
             <NavBar/>
-            {error.message && <Error/>}
-            {success.message && <Success/>}
-            <AppointmentProvider>
-                <Routes>
-                    {user.token ? <Fragment>
-                            {user.roles.includes("ROLE_ADMIN") ? <Fragment>
-                                    <Route path={`/`} element={<ListRooms/>}/>
-                                    <Route path={`/:roomId/appointments`} element={<ListAppointments/>}/>
-                                </Fragment>
-                                :
-                                <Route path={`/`} element={<ListAppointments/>}/>}
-                            <Route path={`/appointment/:appointmentId`} element={<DetailsAppointment/>}/>
-                            <Route path={`/appointment/add`} element={<AddAppointment/>}/>
-                            <Route path={`/appointment/edit/:appointmentId`}
-                                   element={<EditAppointment/>}/>
-                        </Fragment> :
-                        <Fragment>
-                            <Route path={`/`} element={<Register/>}/>
-                            <Route path={`/profile/register`} element={<Register/>}/>
-                            <Route path={`/profile/log-in`} element={<Login/>}/>
-                            <Route path={`/profile/reset-password`} element={<ResetPassword/>}/>
-                        </Fragment>}
-                </Routes>
-            </AppointmentProvider>
+            {notificationStore.hasError &&
+                <Error code={notificationStore.error.code} message={notificationStore.error.message}/>}
+            {notificationStore.hasSuccess &&
+                <Success code={notificationStore.success.code} message={notificationStore.success.message}/>}
+            <Routes>
+                {userStore.authToken ? <Fragment>
+                        {userStore.isAdmin ? <Fragment>
+                                <Route path={`/`} element={<ListRooms/>}/>
+                                <Route path={`/:roomId/appointments`} element={<ListAppointments/>}/>
+                            </Fragment>
+                            :
+                            <Route path={`/`} element={<ListAppointments/>}/>}
+                        <Route path={`/appointment/:appointmentId`} element={<DetailsAppointment/>}/>
+                        <Route path={`/appointment/add`} element={<AddAppointment/>}/>
+                        <Route path={`/appointment/edit/:appointmentId`}
+                               element={<EditAppointment/>}/>
+                    </Fragment> :
+                    <Fragment>
+                        <Route path={`/`} element={<Register/>}/>
+                        <Route path={`/profile/register`} element={<Register/>}/>
+                        <Route path={`/profile/log-in`} element={<Login/>}/>
+                        <Route path={`/profile/reset-password`} element={<ResetPassword/>}/>
+                    </Fragment>}
+            </Routes>
         </Router>
     );
-});
+}));
 
 export default App;

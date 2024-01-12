@@ -1,14 +1,13 @@
 import React, {useEffect, useState} from "react";
-import {observer} from "mobx-react-lite"
+import {inject, observer} from 'mobx-react';
 import {useParams, useSearchParams} from "react-router-dom";
 import {useHttpClient} from "../hooks/http-hook";
 import AppointmentList from "../Components/Appointment/AppointmentList";
 import Filter from "../Components/UI/Filter";
 import Pagination from "../Components/UI/Pagination";
-import {useAppointment} from "../store/AppointmentStore";
-import {useUser} from "../store/UserStore";
 
-const ListAppointments = observer(() => {
+
+const ListAppointments = inject('rootStore')(observer(({rootStore}: any) => {
     const [searchParams, setSearchParams] = useSearchParams();
 
     const [currentPage, setCurrentPage] = useState<number>(
@@ -18,18 +17,17 @@ const ListAppointments = observer(() => {
 
     const {loading, sendRequest} = useHttpClient();
 
-    const {appointments, loadAllAppointments} = useAppointment();
+    const {userStore, appointmentStore} = rootStore
 
     const {roomId} = useParams();
-
-    const {user} = useUser();
 
     const fetchData = async () => {
         try {
             const responseData = await sendRequest(
-                roomId && user.roles.includes("ROLE_ADMIN") ? `/rooms/${roomId}/appointments?${searchParams.toString()}` : `/appointments?${searchParams.toString()}`
+                roomId && userStore.isAdmin ? `/rooms/${roomId}/appointments?${searchParams.toString()}` : `/appointments?${searchParams.toString()}`,
+                'GET', null, userStore.authToken
             );
-            loadAllAppointments(responseData.data);
+            appointmentStore.loadAllAppointments(responseData.data);
             setPagesCount(responseData.pagesCount);
             setCurrentPage(Number(searchParams.get("page")));
         } catch (error) {
@@ -55,8 +53,8 @@ const ListAppointments = observer(() => {
         return (
             <React.Fragment>
                 <Filter/>
-                {appointments ? (
-                    <AppointmentList appointments={appointments}/>
+                {appointmentStore.appointments ? (
+                    <AppointmentList appointments={appointmentStore.appointments}/>
                 ) : (
                     <p className="text-center">No Appointments Found</p>
                 )}
@@ -71,6 +69,6 @@ const ListAppointments = observer(() => {
             </React.Fragment>
         );
     }
-});
+}));
 
 export default ListAppointments;

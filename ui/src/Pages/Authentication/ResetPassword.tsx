@@ -1,9 +1,9 @@
 import React, {useState} from "react";
 import {useHttpClient} from "../../hooks/http-hook";
 import {Link, useNavigate} from "react-router-dom";
-import {useNotification} from "../../store/NotificationStore";
+import {inject, observer} from 'mobx-react';
 
-const ResetPassword = () => {
+const ResetPassword = inject('rootStore')(observer(({rootStore}: any) => {
 
     const [resetFormValues, setResetFormValues] = useState({
         email: "",
@@ -20,7 +20,7 @@ const ResetPassword = () => {
 
     const {loading, sendRequest} = useHttpClient();
 
-    const {addSuccess, clearSuccess} = useNotification()
+    const {notificationStore} = rootStore
 
     const handleSubmit = async (event: any) => {
         event.preventDefault()
@@ -31,9 +31,10 @@ const ResetPassword = () => {
                 resetFormValues
             );
             if (responseData.code == 200) {
-                addSuccess(responseData.message, responseData.code);
-                setTimeout(clearSuccess, 5000);
+                notificationStore.addSuccess(responseData.message, responseData.code);
                 navigate('/profile/log-in')
+            } else {
+                notificationStore.addError(responseData.message, responseData.code);
             }
         } catch (err) {
         }
@@ -70,6 +71,6 @@ const ResetPassword = () => {
                 <Link to="/profile/reset-password" className='info'>Reset Password</Link>
             </form>
         </div>)
-}
+}))
 
 export default ResetPassword;
