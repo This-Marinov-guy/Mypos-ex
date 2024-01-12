@@ -4,7 +4,9 @@ namespace App\EventListener;
 
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationFailureEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
-class InvalidCredentialsListener {
+
+class InvalidCredentialsListener
+{
     public function index(AuthenticationFailureEvent $event): void
     {
         $response = new JsonResponse([

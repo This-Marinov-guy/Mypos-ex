@@ -22,11 +22,6 @@ services:
   api_key_authenticator:
     class: AppBundle\Security\TokenAuthenticator
     arguments: [ "@router" ]
-  acme_api.event.jwt_authenticated_listener:
-    class: App\EventListener\JWTAuthenticatedListener
-    tags:
-      - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_authenticated, method: index }
-
   acme_api.event.authentication_success_listener:
     class: App\EventListener\AuthenticationSuccessListener
     tags:

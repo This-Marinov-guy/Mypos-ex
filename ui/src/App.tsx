@@ -1,6 +1,6 @@
 import React, {Fragment, useEffect} from "react";
 import {observer} from "mobx-react-lite"
-import {BrowserRouter as Router, Navigate, Route, Routes} from "react-router-dom";
+import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
 import {useNotification} from "./store/NotificationStore";
 import {AppointmentProvider} from "./store/AppointmentStore";
 

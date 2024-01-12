@@ -61,6 +61,7 @@
         @apply placeholder:text-gray-400 border border-gray-200  rounded-md text-sm font-medium text-gray-600;
 
     }
+
     .btn-normal {
         @apply bg-gray-600 hover:bg-gray-500 text-white font-medium py-2 px-4 rounded-md;
     }

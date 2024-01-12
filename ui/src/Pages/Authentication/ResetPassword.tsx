@@ -12,13 +12,13 @@ const ResetPassword = () => {
 
     const changeFormInputHandler = (event: Record<string, any>) => {
         setResetFormValues((prevState) => {
-            return { ...prevState, [event.target.name]: event.target.value };
+            return {...prevState, [event.target.name]: event.target.value};
         });
     };
 
     const navigate = useNavigate()
 
-    const { loading, sendRequest } = useHttpClient();
+    const {loading, sendRequest} = useHttpClient();
 
     const {addSuccess, clearSuccess} = useNotification()
 
@@ -40,7 +40,7 @@ const ResetPassword = () => {
     }
 
     return (
-        <div className="dashed-border" >
+        <div className="dashed-border">
             <h1 className="text-center mb-4">Reset Password</h1>
             <form onSubmit={handleSubmit} className="flex flex-col items-center justify-between gap-6 w-full">
                 <div className="input-element w-full lg:w-1/2">

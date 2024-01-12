@@ -1,7 +1,7 @@
 import React from "react";
 import {Link} from "react-router-dom";
 
-const RoomCard = (props: {id:number, size:number}) => {
+const RoomCard = (props: { id: number, size: number }) => {
 
     return (
         <Link

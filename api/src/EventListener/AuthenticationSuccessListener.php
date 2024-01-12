@@ -4,7 +4,8 @@ namespace App\EventListener;
 
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 
-class AuthenticationSuccessListener{
+class AuthenticationSuccessListener
+{
 
     public function index(AuthenticationSuccessEvent $event): void
     {
@@ -20,7 +21,7 @@ class AuthenticationSuccessListener{
             'roles' => $user->getRoles(),
         );
 
-        $data['message'] = 'Welocome Back!';
+        $data['message'] = 'Welcome Back!';
 
         $data['code'] = 200;
 

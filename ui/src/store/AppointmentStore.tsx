@@ -4,28 +4,25 @@ import {action, makeAutoObservable, observable} from "mobx"
 
 export class AppointmentStore {
     appointments: AppointmentData[] = [];
+    loadAllAppointments = action((appointments: AppointmentData[]) => {
+        this.appointments = [...appointments]
+    })
+    addAppointment = action((appointment: AppointmentData) => {
+        this.appointments.concat(appointment)
+    })
+    editAppointment = action((id: number, update: AppointmentData) => {
+        let index = this.appointments.findIndex((obj => obj.id === id));
+        this.appointments[index] = update;
+    })
+    deleteAppointment = action((id: number) => {
+        this.appointments = this.appointments.filter((appointment) => appointment.id !== id)
+    })
+
     constructor() {
         makeAutoObservable(this, {
             appointments: observable,
         })
     }
-
-    loadAllAppointments= action((appointments: AppointmentData[]) => {
-        this.appointments = [...appointments]
-    })
-
-    addAppointment = action((appointment: AppointmentData) => {
-        this.appointments.concat(appointment)
-    })
-
-    editAppointment = action((id: number, update: AppointmentData) => {
-        let index = this.appointments.findIndex((obj => obj.id == id));
-        this.appointments[index] = update;
-    })
-
-    deleteAppointment = action((id: number) => {
-        this.appointments = this.appointments.filter((appointment) => appointment.id != id)
-    })
 }
 
 export const AppointmentContext = createContext<AppointmentStore>(null!);

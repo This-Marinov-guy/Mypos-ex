@@ -12,7 +12,6 @@ use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactory;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Serializer\Encoder\EncoderInterface;
 use Symfony\Component\Serializer\SerializerInterface;
-use function Sodium\compare;
 
 class UserService
 {
@@ -20,7 +19,8 @@ class UserService
     {
     }
 
-    public function getUserFromJWTToken($request): User {
+    public function getUserFromJWTToken($request): User
+    {
         $authHeader = $request->headers->get('Authorization');
         $authToken = null;
 
@@ -28,7 +28,7 @@ class UserService
             $authToken = $matches[1];
         }
 
-        $decodedToken = json_decode(base64_decode(str_replace('_', '/', str_replace('-','+',explode('.', $authToken)[1]))), true);
+        $decodedToken = json_decode(base64_decode(str_replace('_', '/', str_replace('-', '+', explode('.', $authToken)[1]))), true);
 
         return $this->userRepository->findOneBy(['email' => $decodedToken['username']]);
     }
@@ -55,8 +55,8 @@ class UserService
                 $password,
             );
 
-            $user->setRoles(Roles::ADMIN);
-//            $user->setRoles(Roles::USER);
+//            $user->setRoles(Roles::ADMIN);
+            $user->setRoles(Roles::USER);
             $user->setPassword($hashedPassword);
 
             $em = $this->doctrine->getManager();
@@ -87,7 +87,7 @@ class UserService
         ['email' => $email, 'newPassword' => $newPassword] = json_decode($request->getContent(), true);
 
         if (!preg_match(Regex::PASSWORD, $newPassword)) {
-             return [
+            return [
                 'error' => 'New Password must contain minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character',
                 'code' => 422
             ];

@@ -7,7 +7,7 @@ use App\Repository\UserRepository;
 
 class AuthorizeService
 {
-    public function __construct(private UserRepository $userRepository, private UserService $userService)
+    public function __construct(private UserService $userService)
     {
     }
 
@@ -16,7 +16,7 @@ class AuthorizeService
         $user = $this->userService->getUserFromJWTToken($request);
 
         if ($request->headers->get('Authorization') && $user->getEmail() === $appointment->getUser()->getEmail() || Roles::ADMIN == $user->getRoles()) {
-             return [
+            return [
                 'access' => true,
                 'message' => 'Access granted',
                 'code' => 200,

@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Room;
 use App\Repository\RoomRepository;
 use App\Service\AppointmentService;
 use App\Service\AuthorizeService;

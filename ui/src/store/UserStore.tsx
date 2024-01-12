@@ -8,20 +8,12 @@ export class UserStore {
         id: 0,
         roles: [],
     }
-
-    constructor() {
-        makeAutoObservable(this, {
-            user: observable,
-        })
-    }
-
     login = action((user: User) => {
         this.user = user
         localStorage.setItem(
             "user", JSON.stringify(user)
         )
     })
-
     logout = action(() => {
         this.user = {
             token: '',
@@ -30,6 +22,12 @@ export class UserStore {
         }
         localStorage.removeItem("user");
     })
+
+    constructor() {
+        makeAutoObservable(this, {
+            user: observable,
+        })
+    }
 }
 
 export const UserContext = createContext<UserStore>(null!);

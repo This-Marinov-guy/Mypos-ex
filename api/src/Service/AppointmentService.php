@@ -14,7 +14,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class AppointmentService
 {
-    public function __construct(private AppointmentRepository $appointmentRepository, private RoomService $roomService, private UserService $userService, private AuthorizeService $authService ,private UserRepository $userRepository, private ManagerRegistry $doctrine, private SerializerInterface $serializer)
+    public function __construct(private AppointmentRepository $appointmentRepository, private RoomService $roomService, private UserService $userService, private AuthorizeService $authService, private UserRepository $userRepository, private ManagerRegistry $doctrine, private SerializerInterface $serializer)
     {
     }
 
@@ -70,21 +70,6 @@ class AppointmentService
         ];
     }
 
-    public function extendAppointmentList($appointments): array
-    {
-        return array_map(function ($a) {
-            return [
-                'id' => $a->getId(),
-                'date' => $a->getDate(),
-                'details' => $a->getDetails(),
-                'roomId' => $a->getRoom()->getId(),
-                'name' => $a->getUser()->getName(),
-                'egn' => $a->getUser()->getEgn()
-            ];
-        }, $appointments);
-
-    }
-
     public function filterName($userName, $appointmentId): array
     {
         $appointments = $this->userRepository->findOneBy(['name' => $userName])->getAppointments()->toArray();
@@ -100,6 +85,21 @@ class AppointmentService
             'code' => 200,
             'data' => $extendedFilteredAppointments
         ];
+    }
+
+    public function extendAppointmentList($appointments): array
+    {
+        return array_map(function ($a) {
+            return [
+                'id' => $a->getId(),
+                'date' => $a->getDate(),
+                'details' => $a->getDetails(),
+                'roomId' => $a->getRoom()->getId(),
+                'name' => $a->getUser()->getName(),
+                'egn' => $a->getUser()->getEgn()
+            ];
+        }, $appointments);
+
     }
 
     public function createAppointment($request): array
@@ -201,15 +201,15 @@ class AppointmentService
             ];
         }
 
-            $em = $this->doctrine->getManager();
-            $em->remove($appointment);
-            $em->flush();
+        $em = $this->doctrine->getManager();
+        $em->remove($appointment);
+        $em->flush();
 
-            return [
-                'message' => 'Appointment Deleted!',
-                'code' => 200,
-                'data' => $appointment->getId()
-            ];
+        return [
+            'message' => 'Appointment Deleted!',
+            'code' => 200,
+            'data' => $appointment->getId()
+        ];
 
     }
 

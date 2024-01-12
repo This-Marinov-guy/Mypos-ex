@@ -5,4 +5,4 @@ export default interface FilterForm {
     egn: string;
     details: string;
     room: string;
-  }
+}

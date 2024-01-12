@@ -25,19 +25,24 @@ Go to api folder from root directory
 ```cli
 cd api
 ```
+
 ```cli
 php composer.phar self-update
 ```
+
 or if you have composer installed globally use this command
+
 ```cli
 composer self-update
 ```
 
 Step 2: Install composer dependencies
 -------------------------------------
+
 ```cli
 php composer.phar install
 ```
+
 or if you have composer installed globally use this command
 
 ```cli
@@ -51,7 +56,7 @@ Step 3: Generate JWT Token
 generate jwt token - php bin/console lexik:jwt:generate-keypair
 ```
 
-or 
+or
 
 ```cli
 generate jwt token - php bin/console lexik:jwt:generate-keypair --overwritecd 

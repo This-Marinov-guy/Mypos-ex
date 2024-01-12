@@ -4,19 +4,17 @@ import {useHttpClient} from "../hooks/http-hook";
 import {useUser} from "../store/UserStore";
 
 const ListRooms = () => {
-    const [rooms, setRooms] = useState<{id:number, size:number}[]>([])
+    const [rooms, setRooms] = useState<{ id: number, size: number }[]>([])
 
-    const { loading, sendRequest } = useHttpClient();
-
-    const {user} = useUser();
+    const {loading, sendRequest} = useHttpClient();
     const fetchData = async () => {
-            try {
-                const responseData = await sendRequest(
-                    `/rooms`
-                );
-                console.log(responseData)
-              setRooms(responseData)
-            } catch (error) {
+        try {
+            const responseData = await sendRequest(
+                `/rooms`
+            );
+            console.log(responseData)
+            setRooms(responseData)
+        } catch (error) {
         }
     };
 

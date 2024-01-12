@@ -3,14 +3,12 @@
 namespace App\Entity;
 
 use App\Repository\AppointmentRepository;
-use Symfony\Component\Serializer\Annotation\Groups;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Ignore;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
-use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AppointmentRepository::class)]
-
 class Appointment
 {
     #[ORM\Id]
@@ -21,14 +19,12 @@ class Appointment
     #[ORM\Column(type: 'datetime')]
     #[Assert\NotBlank]
     #[Assert\GreaterThan("today", message: "Date cannot be in the past")]
-
     private ?\DateTimeInterface $date;
 
     #[MaxDepth(1)]
     #[ORM\Column(length: 1000)]
     #[Assert\NotBlank(message: 'Required')]
     #[Assert\Length(min: 10, minMessage: 'Minimum 10 chars')]
-
     private ?string $details;
 
     #[MaxDepth(1)]

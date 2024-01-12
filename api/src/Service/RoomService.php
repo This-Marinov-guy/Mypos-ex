@@ -14,7 +14,7 @@ class RoomService
     {
         $rooms = $this->roomRepository->findAll();
         $LIMIT = 8;
-        $targetRoom =  null;
+        $targetRoom = null;
 
         for ($x = 0; $x < count($rooms); $x++) {
             if ($rooms[$x]->getSize() < $LIMIT) {
@@ -30,7 +30,7 @@ class RoomService
             }
         }
 
-       return $targetRoom;
+        return $targetRoom;
     }
 
 }

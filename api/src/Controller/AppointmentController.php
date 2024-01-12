@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Appointment;
-use App\Entity\User;
 use App\Service\AppointmentService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -29,7 +28,7 @@ class AppointmentController extends AbstractController
     }
 
     #[Route('/user-appointments/{userName}/{appointmentId}', name: 'appointment_by_name', methods: ['GET'])]
-    public function findByName($userName, $appointmentId ,AppointmentService $appointmentService): JsonResponse
+    public function findByName($userName, $appointmentId, AppointmentService $appointmentService): JsonResponse
     {
         return $this->json(
             $appointmentService->filterName($userName, $appointmentId)
@@ -37,7 +36,7 @@ class AppointmentController extends AbstractController
     }
 
     #[Route('/appointments/add', name: 'appointment_add')]
-    public function create(AppointmentService $appointmentService,Request $request): JsonResponse
+    public function create(AppointmentService $appointmentService, Request $request): JsonResponse
     {
         return $this->json($appointmentService->createAppointment($request));
     }
@@ -49,7 +48,7 @@ class AppointmentController extends AbstractController
     }
 
     #[Route('/appointments/delete/{appointment}', name: 'appointment_delete', methods: ['DELETE'])]
-    public function delete(Appointment $appointment, Request $request,  AppointmentService $appointmentService): JsonResponse
+    public function delete(Appointment $appointment, Request $request, AppointmentService $appointmentService): JsonResponse
     {
         return $this->json($appointmentService->deleteAppointment($request, $appointment));
     }
