@@ -1,4 +1,4 @@
-import {action, computed, makeAutoObservable, observable, runInAction} from "mobx"
+import {action, computed, makeAutoObservable, observable} from "mobx"
 
 export default class NotificationStore {
     rootStore;
@@ -26,26 +26,23 @@ export default class NotificationStore {
     }
 
     @action addSuccess(message: string, code: number) {
-        runInAction(() => {
-            this.success.message = message
-            this.success.code = code
-
-            setTimeout(() => {
-                this.success.message = ''
-                this.success.code = 0
-            }, 6000)
-        })
-
+        this.success.message = message
+        this.success.code = code
     }
 
     @action addError(message: string, code: number) {
         this.error.message = message
         this.error.code = code
-
-        setTimeout(() => {
-            this.error.message = ''
-            this.error.code = 0
-        }, 6000)
     }
-}
 
+    @action removeSuccess() {
+        this.success.message = ''
+        this.success.code = 0
+    }
+
+    @action removeError() {
+        this.error.message = ''
+        this.error.code = 0
+    }
+
+}

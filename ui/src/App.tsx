@@ -32,9 +32,9 @@ const App = inject('rootStore')(observer(({rootStore}: any) => {
         <Router basename={"/"}>
             <NavBar/>
             {notificationStore.hasError &&
-                <Error code={notificationStore.error.code} message={notificationStore.error.message}/>}
+                <Error/>}
             {notificationStore.hasSuccess &&
-                <Success code={notificationStore.success.code} message={notificationStore.success.message}/>}
+                <Success/>}
             <Routes>
                 {userStore.authToken ? <Fragment>
                         {userStore.isAdmin ? <Fragment>

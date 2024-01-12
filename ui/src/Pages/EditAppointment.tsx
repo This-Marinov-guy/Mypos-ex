@@ -27,7 +27,7 @@ const EditAppointment = inject('rootStore')(observer(({rootStore}: any) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const responseData = await sendRequest(`/appointment/${appointmentId}`);
+                const responseData = await sendRequest(`/appointment-details/${appointmentId}`);
                 if (!responseData) {
                     setAppointmentNotFound(true);
                 }
