@@ -97,6 +97,12 @@ php bin/console server:run
 
 Configuration 
 ---------------------------------
+To Create Rooms for the listings (the command creates 2 rooms)
+
+```cli
+php bin/console create-rooms
+```
+
 To Create an Admin run
 
 ```cli
