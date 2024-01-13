@@ -19,21 +19,23 @@ class CreateRoomCommand extends Command
     {
         $this
             // the name of the command (the part after "app/console")
-            ->setName('create-room')
+            ->setName('create-rooms')
             // the short description shown while running "php app/console list"
-            ->setDescription('Creates a new room.');
+            ->setDescription('Creates 2 new rooms.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $room = new Room();
+        for ($i = 0; $i < 2; $i++) {
+            $room = new Room();
+            $em = $this->doctrine->getManager();
+            $em->persist($room);
+            $em->flush();
 
-        $em = $this->doctrine->getManager();
-        $em->persist($room);
-        $em->flush();
+        }
 
         $output->writeln([
-            'Room Created',
+            'Create 2 rooms',
             '============',
             '',
         ]);
