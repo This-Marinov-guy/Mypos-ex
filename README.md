@@ -117,7 +117,7 @@ email: admin@test.com
 password: Admin123!
 
 ---------------------------------
-To Create an 2 Rooms (in case there are none) run 
+To Create 2 Rooms (in case there are none) run 
 
 ```cli
 php bin/console create-rooms
