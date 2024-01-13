@@ -50,7 +50,7 @@ const Register = inject('rootStore')(observer(({rootStore}: any) => {
                         );
                         if (responseData.code == 200) {
                             notificationStore.addSuccess(responseData.message, responseData.code);
-                            navigate('/login')
+                            navigate('/profile/log-in')
                         } else {
                             notificationStore.addError(responseData.message, responseData.code);
                         }

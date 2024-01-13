@@ -10,7 +10,7 @@ const NavBar = inject('rootStore')(observer(({rootStore}: any) => {
 
     const handleLogout = () => {
         userStore.logout()
-        navigate('/')
+        navigate('/profile/log-in')
     }
 
     return (
