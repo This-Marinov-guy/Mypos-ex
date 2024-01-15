@@ -8,7 +8,7 @@ const RoomList = (props: {
 
     return (
         <React.Fragment>
-            <h2 className="heading">List of Appointments</h2>
+            <h2 className="heading">List of FREE Rooms</h2>
             <div className="flex items-center justify-center mb-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
                     {props.rooms.map((room: { id: number, size: number }) => {
@@ -18,10 +18,8 @@ const RoomList = (props: {
                             size={room.size}
                         />
                     })}
-
                 </div>
             </div>
-
         </React.Fragment>
     );
 };
