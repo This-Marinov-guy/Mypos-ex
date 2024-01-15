@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Constants\RoomConfig;
 use App\Entity\Room;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -21,6 +22,16 @@ class RoomRepository extends ServiceEntityRepository
         parent::__construct($registry, Room::class);
     }
 
+
+    public function filterFullRooms(): object
+    {
+        return $this->createQueryBuilder('r')
+            ->leftJoin('r.appointments', 'a')
+            ->groupBy('r.id')
+            ->having('COUNT(a) < :limit')
+            ->setParameter('limit', RoomConfig::LIMIT)
+            ->getQuery();
+    }
 //    /**
 //     * @return Room[] Returns an array of Room objects
 //     */

@@ -3,8 +3,8 @@
 namespace App\Command;
 
 use App\Constants\Roles;
-use App\Entity\Room;
 use App\Entity\User;
+use Doctrine\DBAL\Exception;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -29,35 +29,44 @@ class CreateAdminCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $user = new User();
+        try {
+            $user = new User();
 
-        $user->setName('Admin');
-        $user->setEgn('012345689');
-        $user->setEmail('admin@test.com');
+            $user->setName('Admin');
+            $user->setEgn('012345689');
+            $user->setEmail('admin@test.com');
 
-        $factory = new PasswordHasherFactory([
-            'common' => ['algorithm' => 'bcrypt'],
-            'memory-hard' => ['algorithm' => 'sodium'],
-        ]);
+            $factory = new PasswordHasherFactory([
+                'common' => ['algorithm' => 'bcrypt'],
+                'memory-hard' => ['algorithm' => 'sodium'],
+            ]);
 
-        $passwordHasher = $factory->getPasswordHasher('common');
+            $passwordHasher = $factory->getPasswordHasher('common');
 
-        $hash = $passwordHasher->hash('Admin123!');
+            $hash = $passwordHasher->hash('Admin123!');
 
-        $user->setPassword($hash);
+            $user->setPassword($hash);
 
-        $user->setRoles(Roles::ADMIN);
+            $user->setRoles(Roles::ADMIN);
 
-        $em = $this->doctrine->getManager();
-        $em->persist($user);
-        $em->flush();
+            $em = $this->doctrine->getManager();
+            $em->persist($user);
+            $em->flush();
 
-        $output->writeln([
-            'Admin Created',
-            '============',
-            'email: admin@test.com',
-            'password: Admin123!'
-        ]);
+            $output->writeln([
+                'Admin Created',
+                '============',
+                'email: admin@test.com',
+                'password: Admin123!'
+            ]);
+        } catch (Exception $e) {
+            $output->writeln([
+                'Admin has already been created',
+                '============',
+                'email: admin@test.com',
+                'password: Admin123!'
+            ]);
+        }
 
         return 1;
     }

@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Constants\RoomConfig;
 use App\Repository\RoomRepository;
 
 class RoomService
@@ -13,11 +14,10 @@ class RoomService
     public function availableRoom()
     {
         $rooms = $this->roomRepository->findAll();
-        $LIMIT = 8;
         $targetRoom = null;
 
         for ($x = 0; $x < count($rooms); $x++) {
-            if ($rooms[$x]->getSize() < $LIMIT) {
+            if ($rooms[$x]->getSize() < RoomConfig::LIMIT) {
                 $targetRoom = $rooms[$x];
                 break;
             }

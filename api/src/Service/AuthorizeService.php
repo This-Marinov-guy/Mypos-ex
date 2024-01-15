@@ -3,7 +3,6 @@
 namespace App\Service;
 
 use App\Constants\Roles;
-use App\Repository\UserRepository;
 
 class AuthorizeService
 {

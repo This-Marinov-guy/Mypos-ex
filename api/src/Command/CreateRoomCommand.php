@@ -33,7 +33,7 @@ class CreateRoomCommand extends Command
             $em->persist($room);
             $em->flush();
         }
-        
+
 
         $output->writeln([
             '2 Rooms Created',

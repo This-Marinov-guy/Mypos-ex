@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\AppointmentRepository;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Ignore;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
@@ -19,7 +20,7 @@ class Appointment
     #[ORM\Column(type: 'datetime')]
     #[Assert\NotBlank]
     #[Assert\GreaterThan("today", message: "Date cannot be in the past")]
-    private ?\DateTimeInterface $date;
+    private ?DateTimeInterface $date;
 
     #[MaxDepth(1)]
     #[ORM\Column(length: 1000)]
@@ -43,12 +44,12 @@ class Appointment
         return $this->id;
     }
 
-    public function getDate(): ?\DateTimeInterface
+    public function getDate(): ?DateTimeInterface
     {
         return $this->date;
     }
 
-    public function setDate(\DateTimeInterface $date): static
+    public function setDate(DateTimeInterface $date): static
     {
         $this->date = $date;
 
