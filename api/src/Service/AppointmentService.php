@@ -34,7 +34,7 @@ class AppointmentService
         $user = $this->userService->getUserFromJWTToken($request);
 
         //check if user is admin and if not return their name in order to limit the appointments to their own
-        $basicUserName = Roles::ADMIN == $user->getRoles() ? null : $user->getName();
+        $basicUserName = !array_diff(Roles::ADMIN, $user->getRoles()) ? null : $user->getName();
 
         $queryBuilder = $this->appointmentRepository->applyFilters($basicUserName, $filters);
 

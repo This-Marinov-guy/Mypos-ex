@@ -83,7 +83,6 @@ class AppointmentRepository extends AbstractRepository
             ->andWhere('a.id != :selfId')
             ->setParameter('selfId', $appointmentId)
             ->getQuery();
-
     }
 
     public function validate($appointment)

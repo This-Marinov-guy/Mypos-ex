@@ -14,7 +14,7 @@ class AuthorizeService
     {
         $user = $this->userService->getUserFromJWTToken($request);
 
-        if ($request->headers->get('Authorization') && $user->getEmail() === $appointment->getUser()->getEmail() || Roles::ADMIN == $user->getRoles()) {
+        if ($request->headers->get('Authorization') && $user->getEmail() === $appointment->getUser()->getEmail() || !array_diff(Roles::ADMIN, $user->getRoles())) {
             return [
                 'access' => true,
                 'message' => 'Access granted',
@@ -32,8 +32,9 @@ class AuthorizeService
 
     public function authorizeAdmin($request): array
     {
+        $user = $this->userService->getUserFromJWTToken($request);
 
-        if ($request->headers->get('Authorization') && Roles::ADMIN == $this->userService->getUserFromJWTToken($request)->getRoles()) {
+        if ($request->headers->get('Authorization') && !array_diff(Roles::ADMIN, $user->getRoles())) {
             return [
                 'access' => true,
                 'message' => 'Access granted',
