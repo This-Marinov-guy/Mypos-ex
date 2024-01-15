@@ -17,21 +17,21 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class RoomRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, Room::class);
-    }
+	public function __construct(ManagerRegistry $registry)
+	{
+		parent::__construct($registry, Room::class);
+	}
 
 
-    public function filterFullRooms(): object
-    {
-        return $this->createQueryBuilder('r')
-            ->leftJoin('r.appointments', 'a')
-            ->groupBy('r.id')
-            ->having('COUNT(a) < :limit')
-            ->setParameter('limit', RoomConfig::LIMIT)
-            ->getQuery();
-    }
+	public function filterFullRooms(): object
+	{
+		return $this->createQueryBuilder('r')
+			->leftJoin('r.appointments', 'a')
+			->groupBy('r.id')
+			->having('COUNT(a) < :limit')
+			->setParameter('limit', RoomConfig::LIMIT)
+			->getQuery();
+	}
 //    /**
 //     * @return Room[] Returns an array of Room objects
 //     */

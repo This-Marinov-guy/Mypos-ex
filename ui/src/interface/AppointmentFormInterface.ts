@@ -1,6 +1,6 @@
 export default interface AppointmentFormInterface {
-    id: number;
-    date: string;
-    details: string;
+	id: number;
+	date: string;
+	details: string;
 }
 

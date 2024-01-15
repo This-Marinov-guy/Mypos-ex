@@ -7,22 +7,22 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 
 abstract class AbstractRepository extends ServiceEntityRepository
 {
-    public function paginateQuery($queryBuilder, $page, $limit = 4): array
-    {
-        $paginator = new Paginator($queryBuilder);
+	public function paginateQuery($queryBuilder, $page, $limit = 4): array
+	{
+		$paginator = new Paginator($queryBuilder);
 
-        $paginator
-            ->getQuery()
-            ->setFirstResult(($page - 1) * $limit)
-            ->setMaxResults($limit);
+		$paginator
+			->getQuery()
+			->setFirstResult(($page - 1) * $limit)
+			->setMaxResults($limit);
 
-        $totalItems = count($paginator);
+		$totalItems = count($paginator);
 
-        $pagesCount = ceil($totalItems / $limit);
+		$pagesCount = ceil($totalItems / $limit);
 
-        return [
-            'paginator' => $paginator,
-            'pagesCount' => $pagesCount,
-        ];
-    }
+		return [
+			'paginator'  => $paginator,
+			'pagesCount' => $pagesCount,
+		];
+	}
 }

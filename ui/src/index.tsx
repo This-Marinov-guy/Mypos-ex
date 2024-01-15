@@ -7,12 +7,12 @@ import "./index.css";
 import {rootStore} from "./store/RootStore";
 
 const root = ReactDOM.createRoot(
-    document.getElementById("root") as HTMLElement
+	document.getElementById("root") as HTMLElement
 );
 root.render(
-    <React.StrictMode>
-        <Provider rootStore={rootStore}>
-            <App/>
-        </Provider>
-    </React.StrictMode>
+	<React.StrictMode>
+		<Provider rootStore={rootStore}>
+			<App />
+		</Provider>
+	</React.StrictMode>
 );

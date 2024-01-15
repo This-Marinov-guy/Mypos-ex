@@ -12,84 +12,84 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: AppointmentRepository::class)]
 class Appointment
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id;
+	#[ORM\Id]
+	#[ORM\GeneratedValue]
+	#[ORM\Column]
+	private ?int $id;
 
-    #[ORM\Column(type: 'datetime')]
-    #[Assert\NotBlank]
-    #[Assert\GreaterThan("today", message: "Date cannot be in the past")]
-    private ?DateTimeInterface $date;
+	#[ORM\Column(type: 'datetime')]
+	#[Assert\NotBlank]
+	#[Assert\GreaterThan("today", message: "Date cannot be in the past")]
+	private ?DateTimeInterface $date;
 
-    #[MaxDepth(1)]
-    #[ORM\Column(length: 1000)]
-    #[Assert\NotBlank(message: 'Required')]
-    #[Assert\Length(min: 10, minMessage: 'Details must be minimum 10 chars')]
-    private ?string $details;
+	#[MaxDepth(1)]
+	#[ORM\Column(length: 1000)]
+	#[Assert\NotBlank(message: 'Required')]
+	#[Assert\Length(min: 10, minMessage: 'Details must be minimum 10 chars')]
+	private ?string $details;
 
-    #[MaxDepth(1)]
-    #[ORM\ManyToOne(targetEntity: User::class, fetch: 'EXTRA_LAZY', inversedBy: 'appointments')]
-    #[ORM\JoinColumn(nullable: false)]
-    #[Ignore]
-    private ?User $user = null;
+	#[MaxDepth(1)]
+	#[ORM\ManyToOne(targetEntity: User::class, fetch: 'EXTRA_LAZY', inversedBy: 'appointments')]
+	#[ORM\JoinColumn(nullable: false)]
+	#[Ignore]
+	private ?User $user = null;
 
-    #[ORM\ManyToOne(targetEntity: Room::class, fetch: 'EXTRA_LAZY', inversedBy: 'appointments')]
-    #[ORM\JoinColumn(nullable: false)]
-    #[Ignore]
-    private ?Room $room = null;
+	#[ORM\ManyToOne(targetEntity: Room::class, fetch: 'EXTRA_LAZY', inversedBy: 'appointments')]
+	#[ORM\JoinColumn(nullable: false)]
+	#[Ignore]
+	private ?Room $room = null;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
+	public function getId(): ?int
+	{
+		return $this->id;
+	}
 
-    public function getDate(): ?DateTimeInterface
-    {
-        return $this->date;
-    }
+	public function getDate(): ?DateTimeInterface
+	{
+		return $this->date;
+	}
 
-    public function setDate(DateTimeInterface $date): static
-    {
-        $this->date = $date;
+	public function setDate(DateTimeInterface $date): static
+	{
+		$this->date = $date;
 
-        return $this;
-    }
+		return $this;
+	}
 
-    public function getDetails(): ?string
-    {
-        return $this->details;
-    }
+	public function getDetails(): ?string
+	{
+		return $this->details;
+	}
 
-    public function setDetails(string $details): static
-    {
-        $this->details = $details;
+	public function setDetails(string $details): static
+	{
+		$this->details = $details;
 
-        return $this;
-    }
+		return $this;
+	}
 
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
+	public function getUser(): ?User
+	{
+		return $this->user;
+	}
 
-    public function setUser(?User $user): static
-    {
-        $this->user = $user;
+	public function setUser(?User $user): static
+	{
+		$this->user = $user;
 
-        return $this;
-    }
+		return $this;
+	}
 
-    public function getRoom(): ?Room
-    {
-        return $this->room;
-    }
+	public function getRoom(): ?Room
+	{
+		return $this->room;
+	}
 
-    public function setRoom(?Room $room): static
-    {
-        $this->room = $room;
+	public function setRoom(?Room $room): static
+	{
+		$this->room = $room;
 
-        return $this;
-    }
+		return $this;
+	}
 
 }

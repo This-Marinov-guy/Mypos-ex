@@ -7,24 +7,25 @@ use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 class AuthenticationSuccessListener
 {
 
-    public function index(AuthenticationSuccessEvent $event): void
-    {
-        $data = $event->getData();
-        $user = $event->getUser();
+	public function index(
+		AuthenticationSuccessEvent $event,
+	): void {
+		$data = $event->getData();
+		$user = $event->getUser();
 
-        if (!$user) {
-            return;
-        }
+		if (!$user) {
+			return;
+		}
 
-        $data['data'] = array(
-            'id' => $user->getId(),
-            'roles' => $user->getRoles(),
-        );
+		$data['data'] = [
+			'id'    => $user->getId(),
+			'roles' => $user->getRoles(),
+		];
 
-        $data['message'] = 'Welcome Back!';
+		$data['message'] = 'Welcome Back!';
 
-        $data['code'] = 200;
+		$data['code'] = 200;
 
-        $event->setData($data);
-    }
+		$event->setData($data);
+	}
 }

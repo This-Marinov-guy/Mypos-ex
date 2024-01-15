@@ -12,36 +12,40 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class RoomController extends AbstractController
 {
-    #[Route('/rooms', name: 'api_admin_rooms')]
-    public function show(Request $request, RoomRepository $roomRepository, AuthorizeService $authorizeService): Response
-    {
-        $requestAdminAccess = $authorizeService->authorizeAdmin($request);
+	#[Route('/rooms', name: 'api_admin_rooms')]
+	public function show(Request $request, RoomRepository $roomRepository, AuthorizeService $authorizeService): Response
+	{
+		$requestAdminAccess = $authorizeService->authorizeAdmin($request);
 
-        if (
-            $requestAdminAccess['access']
-        ) {
-            return $this->json($roomRepository->filterFullRooms()->execute());
+		if (
+			$requestAdminAccess['access']
+		) {
+			return $this->json($roomRepository->filterFullRooms()->execute());
 
-        } else {
-            return $this->json($requestAdminAccess);
-        }
+		} else {
+			return $this->json($requestAdminAccess);
+		}
 
-    }
+	}
 
-    #[Route('/rooms/{roomId}/appointments', name: 'api_admin_room')]
-    public function details($roomId, Request $request, AppointmentService $appointmentService, AuthorizeService $authorizeService): Response
-    {
-        $requestAdminAccess = $authorizeService->authorizeAdmin($request);
+	#[Route('/rooms/{roomId}/appointments', name: 'api_admin_room')]
+	public function details(
+		$roomId,
+		Request $request,
+		AppointmentService $appointmentService,
+		AuthorizeService $authorizeService
+	): Response {
+		$requestAdminAccess = $authorizeService->authorizeAdmin($request);
 
-        if (
-            $requestAdminAccess['access']
-        ) {
-            return $this->json(
-                $appointmentService->filterPaginated($request, $roomId),
-            );
-        } else {
-            return $this->json($requestAdminAccess);
-        }
+		if (
+			$requestAdminAccess['access']
+		) {
+			return $this->json(
+				$appointmentService->filterPaginated($request, $roomId),
+			);
+		} else {
+			return $this->json($requestAdminAccess);
+		}
 
-    }
+	}
 }

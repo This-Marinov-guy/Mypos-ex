@@ -4,5 +4,5 @@ namespace App\Constants;
 
 class RoomConfig
 {
-    const LIMIT = 2;
+	const LIMIT = 2;
 }

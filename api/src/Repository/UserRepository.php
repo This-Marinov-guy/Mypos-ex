@@ -21,39 +21,39 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
-    public function __construct(ManagerRegistry $registry, private ValidatorInterface $validator)
-    {
-        parent::__construct($registry, User::class);
-    }
+	public function __construct(ManagerRegistry $registry, private ValidatorInterface $validator)
+	{
+		parent::__construct($registry, User::class);
+	}
 
-    public function validate($appointment): string
-    {
-        $errors = $this->validator->validate($appointment);
-        $message = '';
+	public function validate($appointment): string
+	{
+		$errors = $this->validator->validate($appointment);
+		$message = '';
 
-        if (count($errors) > 0) {
-            foreach ($errors as $violation) {
-                $violation->getMessage();
-                $message .= $violation . "\n";
-            }
-        }
+		if (count($errors) > 0) {
+			foreach ($errors as $violation) {
+				$violation->getMessage();
+				$message .= $violation . "\n";
+			}
+		}
 
-        return $message;
-    }
+		return $message;
+	}
 
-    /**
-     * Used to upgrade (rehash) the user's password automatically over time.
-     */
-    public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
-    {
-        if (!$user instanceof User) {
-            throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', $user::class));
-        }
+	/**
+	 * Used to upgrade (rehash) the user's password automatically over time.
+	 */
+	public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
+	{
+		if (!$user instanceof User) {
+			throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', $user::class));
+		}
 
-        $user->setPassword($newHashedPassword);
-        $this->getEntityManager()->persist($user);
-        $this->getEntityManager()->flush();
-    }
+		$user->setPassword($newHashedPassword);
+		$this->getEntityManager()->persist($user);
+		$this->getEntityManager()->flush();
+	}
 
 //    /**
 //     * @return User[] Returns an array of User objects
