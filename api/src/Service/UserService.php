@@ -8,13 +8,13 @@ use App\Entity\User;
 use App\Repository\UserRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactory;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Security\Csrf\TokenStorage\TokenStorageInterface;
 use Symfony\Component\Serializer\Encoder\EncoderInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
-class UserService
+class UserService extends AbstractController
 {
 	public function __construct(
 		private UserRepository              $userRepository,
@@ -22,19 +22,23 @@ class UserService
 		private SerializerInterface         $serializer,
 		private UserPasswordHasherInterface $passwordHasher,
 		public EncoderInterface             $encoder,
-		private TokenStorageInterface       $tokenStorage
 	) {
 	}
 
 	public
 	function getUserFromJWTToken(
 		$request
-	): User {
+	): ?User {
+
 		$authHeader = $request->headers->get('Authorization');
 		$authToken = null;
 
 		if (preg_match(Regex::Bearer, $authHeader, $matches)) {
 			$authToken = $matches[1];
+		}
+
+		if (!$authToken) {
+			return null;
 		}
 
 		$decodedToken = json_decode(
@@ -69,7 +73,7 @@ class UserService
 				$password,
 			);
 
-//            $user->setRoles(Roles::ADMIN);
+//          $user->setRoles(Roles::ADMIN);
 			$user->setRoles(Roles::USER);
 			$user->setPassword($hashedPassword);
 
