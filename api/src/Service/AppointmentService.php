@@ -17,7 +17,7 @@ class AppointmentService
     {
     }
 
-    public function filterPaginated(Request $request, $roomid = null): array
+    public function filterPaginated(Request $request, $roomId = null): array
     {
 
         $filters = array_combine(
@@ -25,8 +25,8 @@ class AppointmentService
             array_map(fn($param) => $request->query->get($param), Filters::APPOINTMENT)
         );
 
-        if ($roomid) {
-            $filters['room'] = (string)$roomid;
+        if ($roomId) {
+            $filters['room'] = (string)$roomId;
         }
 
         $page = $request->query->get('page') ?: 1;

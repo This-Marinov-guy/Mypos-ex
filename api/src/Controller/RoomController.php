@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Repository\RoomRepository;
 use App\Service\AppointmentService;
 use App\Service\AuthorizeService;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,6 +14,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class RoomController extends AbstractController
 {
     #[Route('/rooms', name: 'api_admin_rooms')]
+    #[IsGranted('ROLE_ADMIN', message: 'No access! Get out!')]
     public function show(Request $request, RoomRepository $roomRepository, AuthorizeService $authorizeService): Response
     {
         $requestAdminAccess = $authorizeService->authorizeAdmin($request);
@@ -28,8 +30,9 @@ class RoomController extends AbstractController
 
     }
 
-    #[Route('/rooms/{roomid}/appointments', name: 'api_admin_room')]
-    public function details($roomid, Request $request, AppointmentService $appointmentService, AuthorizeService $authorizeService): Response
+    #[Route('/rooms/{roomId}/appointments', name: 'api_admin_room')]
+    #[IsGranted('ROLE_ADMIN', message: 'No access! Get out!')]
+    public function details($roomId, Request $request, AppointmentService $appointmentService, AuthorizeService $authorizeService): Response
     {
         $requestAdminAccess = $authorizeService->authorizeAdmin($request);
 
@@ -37,7 +40,7 @@ class RoomController extends AbstractController
             $requestAdminAccess['access']
         ) {
             return $this->json(
-                $appointmentService->filterPaginated($request, $roomid),
+                $appointmentService->filterPaginated($request, $roomId),
             );
         } else {
             return $this->json($requestAdminAccess);
