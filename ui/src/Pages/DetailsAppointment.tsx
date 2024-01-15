@@ -31,7 +31,7 @@ const DetailsAppointment = () => {
             } else {
                 setAppointment(responseData);
                 const responseUserData = await sendRequest(
-                    `/user-appointments/${responseData.name}/${appointmentId}`
+                    `/user-appointments/${responseData.userId}/${appointmentId}`
                 );
                 setUserAppointments(
                     responseUserData.data

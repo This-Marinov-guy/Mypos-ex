@@ -61,6 +61,7 @@ class AppointmentService
     {
         return [
             'id' => $appointment->getId(),
+            'userId' => $appointment->getUser()->getId(),
             'date' => $appointment->getDate(),
             'details' => $appointment->getDetails(),
             'roomId' => $appointment->getRoom()->getId(),
@@ -69,9 +70,9 @@ class AppointmentService
         ];
     }
 
-    public function filterName($userName, $appointmentId): array
+    public function filterName($userId, $appointmentId): array
     {
-        $appointments = $this->appointmentRepository->nameFilterQuery($userName, $appointmentId)->execute();
+        $appointments = $this->appointmentRepository->nameFilterQuery($userId, $appointmentId)->execute();
 
         return [
             'message' => 'success',

@@ -27,11 +27,11 @@ class AppointmentController extends AbstractController
         );
     }
 
-    #[Route('/user-appointments/{userName}/{appointmentId}', name: 'appointment_by_name', methods: ['GET'])]
-    public function findByName($userName, $appointmentId, AppointmentService $appointmentService): JsonResponse
+    #[Route('/user-appointments/{userId}/{appointmentId}', name: 'appointment_by_name', methods: ['GET'])]
+    public function findByName($userId, $appointmentId, AppointmentService $appointmentService): JsonResponse
     {
         return $this->json(
-            $appointmentService->filterName($userName, $appointmentId)
+            $appointmentService->filterName($userId, $appointmentId)
         );
     }
 
