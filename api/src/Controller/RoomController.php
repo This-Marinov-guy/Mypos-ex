@@ -25,8 +25,6 @@ class RoomController extends AbstractController
 		} else {
 			return $this->json($requestAdminAccess);
 		}
-
-
 	}
 
 	#[Route('/rooms/{roomId}/appointments', name: 'api_admin_room')]

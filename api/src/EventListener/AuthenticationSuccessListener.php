@@ -17,13 +17,9 @@ class AuthenticationSuccessListener
 			return;
 		}
 
-		$data['data'] = [
-			'id'    => $user->getId(),
-			'roles' => $user->getRoles(),
-		];
-
+		$data['id'] = $user->getId();
+		$data['roles'] = $user->getRoles();
 		$data['message'] = 'Welcome Back!';
-
 		$data['code'] = 200;
 
 		$event->setData($data);

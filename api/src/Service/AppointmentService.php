@@ -201,7 +201,6 @@ class AppointmentService
 		return [
 			'message' => 'Appointment Deleted!',
 			'code'    => 200,
-			'data'    => $appointment->getId(),
 		];
 
 	}
