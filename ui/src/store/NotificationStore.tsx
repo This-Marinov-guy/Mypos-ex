@@ -28,11 +28,23 @@ export default class NotificationStore {
 	@action addSuccess(message: string, code: number) {
 		this.success.message = message
 		this.success.code = code
+
+		setTimeout(() => {
+            if (this.hasSuccess) {
+				this.removeSuccess()
+            }
+		}, 5000)
 	}
 
 	@action addError(message: string, code: number) {
 		this.error.message = message
 		this.error.code = code
+
+		setTimeout(() => {
+			if (this.hasError) {
+				this.removeError()
+			}
+		}, 5000)
 	}
 
 	@action removeSuccess() {

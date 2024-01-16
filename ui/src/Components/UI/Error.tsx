@@ -16,7 +16,7 @@ const Error = inject('rootStore')(observer(
 			>
 				<h3 className='mr-3 font-bold'>{notificationStore.error.code}</h3>
 				<p>{notificationStore.error.message}</p>
-				<button onClick={handleRemove} className="btn-auth">Remove</button>
+				<button onClick={handleRemove} className="nav-link">Remove</button>
 			</div>
 		);
 	}));
