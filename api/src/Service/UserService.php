@@ -13,7 +13,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Serializer\Encoder\EncoderInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
-class UserService
+class UserService extends AbstractService
 {
 	public function __construct(
 		private UserRepository              $userRepository,
@@ -45,6 +45,7 @@ class UserService
 			true
 		);
 
+
 		return $this->userRepository->findOneBy(['email' => $decodedToken['username']]);
 	}
 
@@ -72,7 +73,6 @@ class UserService
 				$password,
 			);
 
-//          $user->setRoles(Roles::ADMIN);
 			$user->setRoles(Roles::USER);
 			$user->setPassword($hashedPassword);
 

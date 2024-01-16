@@ -16,6 +16,7 @@ class AppointmentController extends AbstractController
 	{
 		return $this->json(
 			$appointmentService->filterPaginated($request),
+
 		);
 	}
 

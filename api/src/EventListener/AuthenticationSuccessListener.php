@@ -9,9 +9,11 @@ class AuthenticationSuccessListener
 
 	public function index(
 		AuthenticationSuccessEvent $event,
+
 	): void {
 		$data = $event->getData();
 		$user = $event->getUser();
+
 
 		if (!$user) {
 			return;

@@ -12,7 +12,7 @@ security:
     firewalls:
         dev:
             pattern:  ^/(_(profiler|wdt)|css|images|js)/
-            security: false
+            security: true
 
         main:
             stateless: false
@@ -22,9 +22,11 @@ security:
                 check_path:      api_user_login
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
+            custom_authenticators:
+                - App\Security\ApiKeyAuthenticator
 
-#        access_control:
-#            - { path: ^/rooms,  roles: ROLE_ADMIN }
+#    access_control:
+#        - { path: ^/rooms,  roles: ROLE_ADMIN }
 
 when@test:
     security:
