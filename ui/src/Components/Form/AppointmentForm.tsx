@@ -27,9 +27,6 @@ const schema = yup.object().shape({
 
 const AppointmentForm = (props: Props) => {
 
-	if (props.loading) {
-		return <p className="text-center">Loading...</p>;
-	} else {
 		return (
 			<div className="dashed-border w-10/12" style={{margin: "auto"}}>
 				<h2 className="text-center mb-4">{props.heading}</h2>
@@ -83,6 +80,5 @@ const AppointmentForm = (props: Props) => {
 				</Formik>
 			</div>
 		);
-	}
 };
 export default AppointmentForm;

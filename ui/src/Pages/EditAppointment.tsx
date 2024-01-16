@@ -24,6 +24,8 @@ const EditAppointment = inject('rootStore')(observer(({rootStore}: any) => {
 	const [loading, setLoading] = useState(false)
 
 	useEffect(() => {
+		setLoading(true);
+
 		const fetchData = async () => {
 			try {
 				const responseData = await getAppointmentByIdApi(appointmentId!)
@@ -34,6 +36,8 @@ const EditAppointment = inject('rootStore')(observer(({rootStore}: any) => {
 				setInitialValues(rest);
 			} catch (error) {
 				setAppointmentNotFound(true);
+			} finally {
+				setLoading(false);
 			}
 		};
 
