@@ -40,7 +40,7 @@ export default class UserStore {
 						})
 					)
 				})
-					return {message: responseData.message, code: responseData.code}
+				return {message: responseData.message, code: responseData.code}
 			} catch (err) {
 			}
 		} else {
@@ -48,9 +48,10 @@ export default class UserStore {
 			this.id = values.id!;
 			this.roles = values.roles!;
 
-			return localStorage.setItem(
+			localStorage.setItem(
 				"user", JSON.stringify(values)
 			)
+			return
 		}
 	}
 

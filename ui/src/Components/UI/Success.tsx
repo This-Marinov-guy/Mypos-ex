@@ -15,7 +15,7 @@ const Success = inject('rootStore')(observer(
 			>
 				<h3 className='mr-3 font-bold'>{notificationStore.success.code}</h3>
 				<p>{notificationStore.success.message}</p>
-				<button onClick={handleRemove} className="nav-link">Remove</button>
+				<button onClick={handleRemove} className="btn-auth">Remove</button>
 			</div>
 		);
 	}));
