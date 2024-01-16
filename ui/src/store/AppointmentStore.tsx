@@ -1,5 +1,5 @@
 import AppointmentData from "../interface/AppointmentInterface";
-import {action, makeAutoObservable, observable} from "mobx"
+import {action, makeAutoObservable, observable, runInAction} from "mobx"
 import {deleteAppointmentApi, getAppointmentsApi, postAppointmentApi, putAppointmentApi} from "../api/appointments";
 import {getRoomAppointmentsApi} from "../api/room";
 
@@ -16,10 +16,12 @@ export default class AppointmentStore {
 	async loadAllAppointments(searchParams: string, token: string, roomId = '') {
 		try {
 			const responseData = roomId ?
-				await getRoomAppointmentsApi(searchParams, token, roomId ) :
+				await getRoomAppointmentsApi(searchParams, token, roomId) :
 				await getAppointmentsApi(searchParams, token)
-			this.appointments = responseData.data
-			return responseData
+			runInAction(() => {
+				this.appointments = responseData.data
+				return responseData
+			})
 		} catch (error) {
 		}
 	}
