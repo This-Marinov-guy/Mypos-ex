@@ -16,7 +16,7 @@ export default class AppointmentStore {
 	async loadAllAppointments(searchParams: string, token: string, roomId = '') {
 		try {
 			const responseData = roomId ?
-				await getRoomAppointmentsApi(searchParams, roomId, token) :
+				await getRoomAppointmentsApi(searchParams, token, roomId ) :
 				await getAppointmentsApi(searchParams, token)
 			this.appointments = responseData.data
 			return responseData

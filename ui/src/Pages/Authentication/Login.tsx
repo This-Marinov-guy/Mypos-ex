@@ -25,7 +25,7 @@ const Login = inject('rootStore')(observer(({rootStore}: any) => {
 		try {
 			setLoading(true);
 			const responseData = await userStore.login(loginFormValues)
-			if (responseData.token) {
+			if (responseData.code === 200) {
 				notificationStore.addSuccess(responseData.message, responseData.code);
 				navigate('/')
 			} else {

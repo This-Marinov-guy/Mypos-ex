@@ -34,7 +34,7 @@ export default class UserStore {
 				localStorage.setItem(
 					"user", JSON.stringify({token: responseData.token, id: responseData.id, roles: responseData.roles})
 				)
-				return responseData
+				return {message: responseData.message, code: responseData.code}
 			} catch (err) {
 			}
 		} else {
@@ -42,7 +42,7 @@ export default class UserStore {
 			this.id = values.id!;
 			this.roles = values.roles!;
 
-			localStorage.setItem(
+			return localStorage.setItem(
 				"user", JSON.stringify(values)
 			)
 		}
@@ -53,6 +53,6 @@ export default class UserStore {
 		this.id = 0;
 		this.roles = [];
 
-		localStorage.removeItem("user");
+		return localStorage.removeItem("user");
 	}
 }
