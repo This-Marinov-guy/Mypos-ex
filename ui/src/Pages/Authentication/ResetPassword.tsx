@@ -1,7 +1,7 @@
 import React, {useState} from "react";
-import {useHttpClient} from "../../hooks/http-hook";
 import {Link, useNavigate} from "react-router-dom";
 import {inject, observer} from 'mobx-react';
+import {resetPasswordApi} from "../../api/user";
 
 const ResetPassword = inject('rootStore')(observer(({rootStore}: any) => {
 
@@ -18,18 +18,14 @@ const ResetPassword = inject('rootStore')(observer(({rootStore}: any) => {
 
 	const navigate = useNavigate()
 
-	const {loading, sendRequest} = useHttpClient();
-
+	const [loading, setLoading] = useState(false)
 	const {notificationStore} = rootStore
 
 	const handleSubmit = async (event: any) => {
 		event.preventDefault()
 		try {
-			const responseData = await sendRequest(
-				'/user/reset-password',
-				'POST',
-				resetFormValues
-			);
+			setLoading(true)
+			const responseData = await resetPasswordApi(resetFormValues);
 			if (responseData.code == 200) {
 				notificationStore.addSuccess(responseData.message, responseData.code);
 				navigate('/profile/log-in')
@@ -37,6 +33,8 @@ const ResetPassword = inject('rootStore')(observer(({rootStore}: any) => {
 				notificationStore.addError(responseData.message, responseData.code);
 			}
 		} catch (err) {
+		} finally {
+			setLoading(false)
 		}
 	}
 

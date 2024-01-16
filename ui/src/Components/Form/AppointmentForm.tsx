@@ -1,11 +1,11 @@
 import React from "react";
 import * as yup from "yup";
-import {useHttpClient} from "../../hooks/http-hook";
 import {ErrorMessage, Field, Form, Formik} from "formik";
 import moment from "moment";
 import AppointmentFormInterface from "../../interface/AppointmentFormInterface";
 
 type Props = {
+	loading: boolean;
 	heading: string;
 	onSubmit: Function;
 	initialValues?: AppointmentFormInterface;
@@ -26,9 +26,8 @@ const schema = yup.object().shape({
 });
 
 const AppointmentForm = (props: Props) => {
-	const {loading} = useHttpClient();
 
-	if (loading) {
+	if (props.loading) {
 		return <p className="text-center">Loading...</p>;
 	} else {
 		return (
@@ -75,8 +74,8 @@ const AppointmentForm = (props: Props) => {
 									/>
 								</div>
 							</div>
-							<button disabled={loading} type="submit" className="btn-primary">
-								{loading ? 'Loading...' : 'Submit'}
+							<button disabled={props.loading} type="submit" className="btn-primary">
+								{props.loading ? 'Loading...' : 'Submit'}
 							</button>
 
 						</Form>

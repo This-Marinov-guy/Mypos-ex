@@ -1,6 +1,5 @@
-import React from "react";
+import React, {useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
-import {useHttpClient} from "../../hooks/http-hook";
 import moment from "moment";
 import AppointmentData from "../../interface/AppointmentInterface";
 import {inject} from 'mobx-react';
@@ -15,27 +14,23 @@ const AppointmentCardExtended = inject('rootStore')((props: Props) => {
 
 	const expired = new Date(props.date) < new Date();
 
-	const {sendRequest} = useHttpClient();
-
+	const [loading, setLoading] = useState(false)
 	const {userStore, appointmentStore, notificationStore} = props.rootStore;
 
 	const navigate = useNavigate()
 	const handleDelete = async () => {
 		try {
-			const responseData = await sendRequest(
-				`/appointments/delete/${props.id}`,
-				"DELETE",
-				null,
-				userStore.authToken
-			);
+			setLoading(true);
+			const responseData = await appointmentStore.deleteAppointment(props.id, userStore.token)
 			if (responseData.code == 200) {
-				appointmentStore.deleteAppointment(responseData.data)
 				notificationStore.addSuccess(responseData.message, responseData.code);
 				navigate('/');
 			} else {
 				notificationStore.addError(responseData.message, responseData.code);
 			}
 		} catch (err) {
+		} finally {
+			setLoading(false)
 		}
 	};
 
@@ -59,8 +54,8 @@ const AppointmentCardExtended = inject('rootStore')((props: Props) => {
 				<Link to={`/appointment/edit/${props.id}`} className="btn-outline">
 					Edit
 				</Link>
-				<button onClick={handleDelete} className="btn-delete">
-					Delete
+				<button disabled={loading} onClick={handleDelete} className="btn-delete">
+					{loading ? 'Loading...' : 'Delete'}
 				</button>
 			</div>
 		</div>

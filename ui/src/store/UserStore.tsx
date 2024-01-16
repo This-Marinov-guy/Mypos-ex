@@ -1,5 +1,6 @@
 import {action, computed, makeAutoObservable, observable} from "mobx"
-import User from "../interface/UserInterface";
+import {logInApi} from "../api/user";
+import {UserLoginValues} from "../interface/UserInterface";
 
 export default class UserStore {
 	rootStore;
@@ -20,14 +21,31 @@ export default class UserStore {
 		return this.token || null
 	}
 
-	@action login(user: User) {
-		this.token = user.token;
-		this.id = user.id;
-		this.roles = user.roles;
+	@action
+	async login(values: UserLoginValues) {
+		if (!values.token) {
+			try {
+				const responseData = await logInApi(values);
+				if (responseData.token) {
+					this.token = responseData.token;
+					this.id = responseData.id;
+					this.roles = responseData.roles;
+				}
+				localStorage.setItem(
+					"user", JSON.stringify({token: responseData.token, id: responseData.id, roles: responseData.roles})
+				)
+				return responseData
+			} catch (err) {
+			}
+		} else {
+			this.token = values.token;
+			this.id = values.id!;
+			this.roles = values.roles!;
 
-		localStorage.setItem(
-			"user", JSON.stringify(user)
-		)
+			localStorage.setItem(
+				"user", JSON.stringify(values)
+			)
+		}
 	}
 
 	@action logout() {

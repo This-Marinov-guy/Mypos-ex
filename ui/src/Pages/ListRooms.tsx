@@ -1,21 +1,21 @@
 import React, {useEffect, useState} from "react";
 import {inject, observer} from 'mobx-react';
 import RoomList from "../Components/Room/RoomList";
-import {useHttpClient} from "../hooks/http-hook";
+import {getRoomsApi} from "../api/room";
 
 const ListRooms = inject('rootStore')(observer(({rootStore}: any) => {
 	const [rooms, setRooms] = useState<{ id: number, size: number }[]>([])
 
-	const {loading, sendRequest} = useHttpClient();
+	const [loading, setLoading] = useState(false);
 
 	const {userStore} = rootStore
 	const fetchData = async () => {
 		try {
-			const responseData = await sendRequest(
-				`/rooms`, 'GET', null, userStore.authToken
-			);
-			setRooms(responseData)
+			setLoading(true);
+			setRooms(await getRoomsApi(userStore.token));
 		} catch (error) {
+		} finally {
+			setLoading(false);
 		}
 	};
 

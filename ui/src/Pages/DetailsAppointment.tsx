@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
-import {useHttpClient} from "../hooks/http-hook";
 import AppointmentCardExtended from "../Components/Appointment/AppointmentCardExtended";
 import AppointmentList from "../Components/Appointment/AppointmentList";
 import AppointmentData from "../interface/AppointmentInterface";
+import {getAppointmentByIdApi, getUserAppointmentsApi} from "../api/appointments";
 
 const DetailsAppointment = () => {
 	const [appointment, setAppointment] = useState<AppointmentData>({
@@ -18,27 +18,28 @@ const DetailsAppointment = () => {
 
 	const {appointmentId} = useParams();
 
-	const {loading, sendRequest} = useHttpClient();
+	const [loading, setLoading] = useState(false);
 
 	const [appointmentNotFound, setAppointmentNotFound] =
 		useState<boolean>(false);
 
 	const fetchData = async () => {
 		try {
-			const responseData = await sendRequest(`/appointment-details/${appointmentId}`);
+			setLoading(true);
+			const responseData = await getAppointmentByIdApi(appointmentId!);
 			if (!responseData) {
 				setAppointmentNotFound(true);
 			} else {
 				setAppointment(responseData);
-				const responseUserData = await sendRequest(
-					`/user-appointments/${responseData.userId}/${appointmentId}`
-				);
+				const responseUserData = await getUserAppointmentsApi(responseData.userId, appointmentId!)
 				setUserAppointments(
 					responseUserData.data
 				);
 			}
 		} catch (error) {
 			setAppointmentNotFound(true);
+		} finally {
+			setLoading(false)
 		}
 	};
 

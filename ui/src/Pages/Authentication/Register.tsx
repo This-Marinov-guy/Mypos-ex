@@ -1,10 +1,10 @@
-import React from "react";
+import React, {useState} from "react";
 import * as yup from "yup";
 import YupPassword from 'yup-password'
-import {useHttpClient} from "../../hooks/http-hook";
 import {ErrorMessage, Field, Form, Formik} from "formik";
 import {inject, observer} from 'mobx-react';
 import {useNavigate} from "react-router-dom";
+import {signUpApi} from "../../api/user";
 
 YupPassword(yup)
 
@@ -28,8 +28,7 @@ const schema = yup.object().shape({
 });
 
 const Register = inject('rootStore')(observer(({rootStore}: any) => {
-	const {loading, sendRequest} = useHttpClient();
-
+	const [loading, setLoading] = useState(false)
 	const navigate = useNavigate()
 
 	const {notificationStore} = rootStore
@@ -43,11 +42,8 @@ const Register = inject('rootStore')(observer(({rootStore}: any) => {
 				validationSchema={schema}
 				onSubmit={async (values) => {
 					try {
-						const responseData = await sendRequest(
-							'/user/register',
-							'POST',
-							values
-						);
+						setLoading(true)
+						const responseData = await signUpApi(values);
 						if (responseData.code == 200) {
 							notificationStore.addSuccess(responseData.message, responseData.code);
 							navigate('/profile/log-in')
@@ -55,6 +51,8 @@ const Register = inject('rootStore')(observer(({rootStore}: any) => {
 							notificationStore.addError(responseData.message, responseData.code);
 						}
 					} catch (err) {
+					} finally {
+						setLoading(false)
 					}
 				}}
 				initialValues={

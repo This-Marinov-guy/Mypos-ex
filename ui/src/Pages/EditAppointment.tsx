@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
-import {useHttpClient} from "../hooks/http-hook";
 import {inject, observer} from 'mobx-react';
 import AppointmentForm from "../Components/Form/AppointmentForm";
 import AppointmentData from "../interface/AppointmentInterface";
 import AppointmentFormInterface from "../interface/AppointmentFormInterface";
+import {getAppointmentByIdApi} from "../api/appointments";
 
 
 const EditAppointment = inject('rootStore')(observer(({rootStore}: any) => {
@@ -19,15 +19,14 @@ const EditAppointment = inject('rootStore')(observer(({rootStore}: any) => {
 
 	const {userStore, appointmentStore, notificationStore} = rootStore
 
-
 	const {appointmentId} = useParams();
 
-	const {sendRequest} = useHttpClient();
+	const [loading, setLoading] = useState(false)
 
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const responseData = await sendRequest(`/appointment-details/${appointmentId}`);
+				const responseData = await getAppointmentByIdApi(appointmentId!)
 				if (!responseData) {
 					setAppointmentNotFound(true);
 				}
@@ -43,19 +42,16 @@ const EditAppointment = inject('rootStore')(observer(({rootStore}: any) => {
 
 	const handleSubmit = async (values: AppointmentData) => {
 		try {
-			const responseData = await sendRequest(
-				`/appointments/edit/${appointmentId}`,
-				"PUT",
-				values,
-				userStore.authToken
-			);
+			setLoading(true);
+			const responseData = await appointmentStore.editAppointment(appointmentId, values, userStore.token)
 			if (responseData.code == 200) {
-				appointmentStore.editAppointment(Number(appointmentId), responseData.data)
 				notificationStore.addSuccess(responseData.message, responseData.code);
 			} else {
 				notificationStore.addError(responseData.message, responseData.code);
 			}
 		} catch (err) {
+		} finally {
+			setLoading(false)
 		}
 	};
 
@@ -64,6 +60,7 @@ const EditAppointment = inject('rootStore')(observer(({rootStore}: any) => {
 	} else {
 		return (
 			<AppointmentForm
+				loading={loading}
 				heading="Edit appointment"
 				onSubmit={handleSubmit}
 				initialValues={initialValues}

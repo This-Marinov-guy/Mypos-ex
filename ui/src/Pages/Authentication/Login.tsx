@@ -1,5 +1,4 @@
 import React, {useState} from "react";
-import {useHttpClient} from "../../hooks/http-hook";
 import {Link, useNavigate} from "react-router-dom";
 import {inject, observer} from 'mobx-react';
 
@@ -15,7 +14,7 @@ const Login = inject('rootStore')(observer(({rootStore}: any) => {
 		});
 	};
 
-	const {loading, sendRequest} = useHttpClient();
+	const [loading, setLoading] = useState(false);
 
 	const navigate = useNavigate()
 
@@ -24,23 +23,17 @@ const Login = inject('rootStore')(observer(({rootStore}: any) => {
 	const handleSubmit = async (event: any) => {
 		event.preventDefault()
 		try {
-			const responseData = await sendRequest(
-				'/user/login',
-				'POST',
-				loginFormValues,
-			);
+			setLoading(true);
+			const responseData = await userStore.login(loginFormValues)
 			if (responseData.token) {
-				userStore.login({
-					token: responseData.token,
-					id:    responseData.data.id,
-					roles: responseData.data.roles
-				});
 				notificationStore.addSuccess(responseData.message, responseData.code);
 				navigate('/')
 			} else {
 				notificationStore.addError(responseData.message, responseData.code);
 			}
 		} catch (err) {
+		} finally {
+			setLoading(false)
 		}
 	}
 

@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {inject, observer} from 'mobx-react';
 import {useParams, useSearchParams} from "react-router-dom";
-import {useHttpClient} from "../hooks/http-hook";
 import AppointmentList from "../Components/Appointment/AppointmentList";
 import Filter from "../Components/UI/Filter";
 import Pagination from "../Components/UI/Pagination";
@@ -15,7 +14,7 @@ const ListAppointments = inject('rootStore')(observer(({rootStore}: any) => {
 	);
 	const [pagesCount, setPagesCount] = useState<number>(1);
 
-	const {loading, sendRequest} = useHttpClient();
+	const [loading, setLoading] = useState(false)
 
 	const {userStore, appointmentStore} = rootStore
 
@@ -23,16 +22,14 @@ const ListAppointments = inject('rootStore')(observer(({rootStore}: any) => {
 
 	const fetchData = async () => {
 		try {
-			const responseData = await sendRequest(
-				roomId && userStore.isAdmin ? `/rooms/${roomId}/appointments?${searchParams.toString()}` : `/appointments?${searchParams.toString()}`,
-				'GET', null, userStore.authToken
-			);
-			appointmentStore.loadAllAppointments(responseData.data);
+			setLoading(true);
+			const responseData = appointmentStore.loadAllAppointments(searchParams.toString(), userStore.token, roomId);
 			setPagesCount(responseData.pagesCount);
 			setCurrentPage(Number(searchParams.get("page")));
 		} catch (error) {
+		} finally {
+			setLoading(false)
 		}
-
 	};
 
 	useEffect(() => {
