@@ -16,7 +16,6 @@ class RoomController extends AbstractController
 	public function show(Request $request, RoomRepository $roomRepository, AuthorizeService $authorizeService): Response
 	{
 		$requestAdminAccess = $authorizeService->authorizeAdmin($request);
-
 		if (
 			$requestAdminAccess['access']
 		) {

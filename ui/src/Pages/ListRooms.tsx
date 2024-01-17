@@ -14,7 +14,6 @@ const ListRooms = inject('rootStore')(observer(({rootStore}: any) => {
 			setLoading(true);
 			setRooms(await getRoomsApi(userStore.token));
 		} catch (error) {
-			throw error
 		} finally {
 			setLoading(false);
 		}

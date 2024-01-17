@@ -13,7 +13,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Serializer\Encoder\EncoderInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
-class UserService extends AbstractService
+class UserService
 {
 	public function __construct(
 		private UserRepository              $userRepository,
@@ -21,6 +21,7 @@ class UserService extends AbstractService
 		private SerializerInterface         $serializer,
 		private UserPasswordHasherInterface $passwordHasher,
 		public EncoderInterface             $encoder,
+
 	) {
 	}
 
