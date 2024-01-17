@@ -8,11 +8,16 @@ const ListRooms = inject('rootStore')(observer(({rootStore}: any) => {
 
 	const [loading, setLoading] = useState(false);
 
-	const {userStore} = rootStore
+	const {userStore, notificationStore} = rootStore
 	const fetchData = async () => {
 		try {
 			setLoading(true);
-			setRooms(await getRoomsApi(userStore.token));
+			const responseData = await getRoomsApi(userStore.token)
+			if (responseData.message) {
+				notificationStore.addError(responseData.message, responseData.code)
+			} else {
+				setRooms(responseData);
+			}
 		} catch (error) {
 		} finally {
 			setLoading(false);
