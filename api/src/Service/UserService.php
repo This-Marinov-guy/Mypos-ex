@@ -28,7 +28,6 @@ class UserService extends AbstractService
 	function getUserFromJWTToken(
 		$request
 	): ?User {
-
 		$authHeader = $request->headers->get('Authorization');
 		$authToken = null;
 

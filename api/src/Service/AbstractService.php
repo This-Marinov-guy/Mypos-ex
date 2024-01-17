@@ -6,8 +6,6 @@ use LogicException;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Contracts\Service\Attribute\Required;
-use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use UnitEnum;
 
 abstract class AbstractService

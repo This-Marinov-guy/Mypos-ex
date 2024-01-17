@@ -5,7 +5,6 @@ namespace App\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Log\Logger;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
@@ -35,7 +34,6 @@ class ApiKeyAuthenticator extends AbstractAuthenticator
             throw new CustomUserMessageAuthenticationException('No API token provided');
         }
 
-
         return new SelfValidatingPassport(new UserBadge($apiToken));
     }
 
@@ -49,7 +47,8 @@ class ApiKeyAuthenticator extends AbstractAuthenticator
     {
 	    $data = [
 		    // you may want to customize or obfuscate the message first
-		    'message' => strtr($exception->getMessageKey(), $exception->getMessageData())
+		    'message' => 'Unauthorized access',
+		    'code' => 401
 
 		    // or to translate this message
 		    // $this->translator->trans($exception->getMessageKey(), $exception->getMessageData())
