@@ -30,9 +30,9 @@ export default class NotificationStore {
 		this.success.code = code
 
 		setTimeout(() => {
-            if (this.hasSuccess) {
+			if (this.hasSuccess) {
 				this.removeSuccess()
-            }
+			}
 		}, 5000)
 	}
 

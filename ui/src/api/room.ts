@@ -13,7 +13,7 @@ export const getRoomsApi = async (token: string) => {
 
 export const getRoomAppointmentsApi = async (searchParams: string, token: string, roomId: string) => {
 	try {
-		const response = await axios.get(url + `/rooms/${roomId}/appointments?${searchParams}`, {headers: {Authorization:  'Bearer ' + token}})
+		const response = await axios.get(url + `/rooms/${roomId}/appointments?${searchParams}`, {headers: {Authorization: 'Bearer ' + token}})
 		return response.data
 	} catch (error) {
 
